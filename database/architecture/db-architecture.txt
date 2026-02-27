@@ -62,8 +62,8 @@ CREATE TABLE properties (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     property_type_id BIGINT UNSIGNED NOT NULL,
     business_type_id BIGINT UNSIGNED NOT NULL,
-    state_id BIGINT UNSIGNED NOT NULL,
-    municipality_id BIGINT UNSIGNED NOT NULL,
+    state_id BIGINT UNSIGNED NOT ,
+    municipality_id BIGINT UNSIGNED NULL,
 
     title VARCHAR(255) NOT NULL,
     slug VARCHAR(255) NOT NULL UNIQUE,
