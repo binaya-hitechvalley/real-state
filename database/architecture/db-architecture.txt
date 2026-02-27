@@ -1,0 +1,204 @@
+-- =========================================================
+-- REAL ESTATE WEB APP - COMPLETE DATABASE SCHEMA
+-- =========================================================
+
+DROP DATABASE IF EXISTS real_estate_app;
+CREATE DATABASE real_estate_app;
+USE real_estate_app;
+
+-- =========================================================
+-- 1. PROPERTY TYPES
+-- =========================================================
+CREATE TABLE property_types (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    slug VARCHAR(50) NOT NULL UNIQUE,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- =========================================================
+-- 2. BUSINESS TYPES
+-- =========================================================
+CREATE TABLE business_types (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    slug VARCHAR(50) NOT NULL UNIQUE,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- =========================================================
+-- 3. STATES
+-- =========================================================
+CREATE TABLE states (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    code VARCHAR(10) UNIQUE,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- =========================================================
+-- 4. MUNICIPALITIES
+-- =========================================================
+CREATE TABLE municipalities (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    state_id BIGINT UNSIGNED NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_municipality_state
+        FOREIGN KEY (state_id)
+        REFERENCES states(id)
+        ON DELETE CASCADE
+);
+
+-- =========================================================
+-- 5. PROPERTIES
+-- =========================================================
+CREATE TABLE properties (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    property_type_id BIGINT UNSIGNED NOT NULL,
+    business_type_id BIGINT UNSIGNED NOT NULL,
+    state_id BIGINT UNSIGNED NOT NULL,
+    municipality_id BIGINT UNSIGNED NOT NULL,
+
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT,
+    price DECIMAL(15,2),
+    price_period string ('total', monthly, yearly)
+    land_area_size string(0-1-2-2),
+    address VARCHAR(255) nullable,
+    latitude DECIMAL(10,8) nullable,
+    longitude DECIMAL(11,8) nullable,
+
+    status ENUM('available','sold','rented','inactive') DEFAULT 'available',
+    is_featured BOOLEAN DEFAULT FALSE,
+
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_property_type
+        FOREIGN KEY (property_type_id)
+        REFERENCES property_types(id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_business_type
+        FOREIGN KEY (business_type_id)
+        REFERENCES business_types(id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_property_state
+        FOREIGN KEY (state_id)
+        REFERENCES states(id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_property_municipality
+        FOREIGN KEY (municipality_id)
+        REFERENCES municipalities(id)
+        ON DELETE RESTRICT
+);
+
+-- =========================================================
+-- 6. PROPERTY FEATURES
+-- =========================================================
+CREATE TABLE property_features (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    property_id BIGINT UNSIGNED NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+-- =========================================================
+-- 8. IMAGES (POLYMORPHIC)
+-- =========================================================
+CREATE TABLE images (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    imageable_id BIGINT UNSIGNED NOT NULL,
+    imageable_type VARCHAR(255) NOT NULL,
+    directory varchar (80),
+    file_name VARCHAR(255) NOT NULL,
+    alt_text VARCHAR(255),
+    is_primary BOOLEAN DEFAULT FALSE,
+
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_imageable (imageable_id, imageable_type)
+);
+
+-- =========================================================
+-- 9. SLIDERS
+-- =========================================================
+CREATE TABLE sliders (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    subtitle VARCHAR(255),
+    link VARCHAR(255),
+    is_active BOOLEAN DEFAULT TRUE,
+    order_column INT DEFAULT 0,
+
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- =========================================================
+-- 10. ENQUIRIES
+-- =========================================================
+CREATE TABLE enquiries (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    property_id BIGINT UNSIGNED NOT NULL,
+
+    full_name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    phone VARCHAR(50),
+    message TEXT NOT NULL,
+
+    want_site_visit BOOLEAN DEFAULT FALSE,
+    site_visit_date DATE,
+
+    status ENUM('new','contacted','closed') DEFAULT 'new',
+
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_enquiry_property
+        FOREIGN KEY (property_id)
+        REFERENCES properties(id)
+        ON DELETE CASCADE
+);
+
+-- =========================================================
+-- 11. CONTACT FORMS
+-- =========================================================
+CREATE TABLE contact_forms (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    phone VARCHAR(50),
+    subject VARCHAR(255),
+    message TEXT NOT NULL,
+
+    status ENUM('new','replied','closed') DEFAULT 'new',
+
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- =========================================================
+-- PERFORMANCE INDEXES
+-- =========================================================
+CREATE INDEX idx_properties_price ON properties(price);
+CREATE INDEX idx_properties_status ON properties(status);
+CREATE INDEX idx_properties_featured ON properties(is_featured);
+CREATE INDEX idx_properties_location ON properties(state_id, municipality_id);
+
+-- =========================================================
+-- END OF SCHEMA
+-- =========================================================

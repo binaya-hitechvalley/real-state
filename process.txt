@@ -1,0 +1,10 @@
+create a prompt for an coding AI to create the backend dashboard part for crud operations of all models, here are the list of requirements.
+1. the coding structure should have,  controller and service class, all business logic should be on service class and the controller should be one liner to call the service class methods,
+2. the store and update methods should have a request class, and validation errors should be returned from that class.
+3. the controllers for backend should be inside Admin folders
+4. the views should be inside admin/{model name} directory for backen
+5. the view should implement datatable, for all listing pages of model
+6. create a config file named, adminMenu.php to list all the sidebar menus on dashboard.
+7. create database table filelds from a specific file that contains a sql schema
+8. for images use a single model Image and use it by all the models with is_featured flag, use morphone and morphMany realtions
+9. the listing of records from database should implement sortable and filterable for this we can  use a common service or repository to implement
