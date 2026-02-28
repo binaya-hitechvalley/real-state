@@ -11,7 +11,7 @@ use App\Http\Controllers\Admin\PropertyFeatureController;
 // Admin routes will be defined here
 // Example:
 Route::prefix('admin')->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     
     // Sliders Management
     Route::resource('sliders', SliderController::class)->names('admin.sliders');

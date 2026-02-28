@@ -38,26 +38,26 @@
                         <p class="font-medium text-gray-800">{{ Auth::user()->name ?? 'Admin User' }}</p>
                         <p class="text-sm text-gray-500">{{ Auth::user()->email ?? 'admin@example.com' }}</p>
                     </div>
-                    <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
+                    {{-- <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
                         <i class="fas fa-user-circle mr-3 text-gray-500"></i>
                         <span>My Profile</span>
-                    </a>
-                    <a href="{{ route('settings') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
+                    </a> --}}
+                    {{-- <a href="{{ route('settings') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
                         <i class="fas fa-cog mr-3 text-gray-500"></i>
                         <span>Account Settings</span>
-                    </a>
-                    <a href="{{ route('help') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
+                    </a> --}}
+                    {{-- <a href="{{ route('help') }}" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
                         <i class="fas fa-question-circle mr-3 text-gray-500"></i>
                         <span>Help & Support</span>
-                    </a>
+                    </a> --}}
                     <div class="border-t border-gray-200"></div>
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                    {{-- <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
                         <button type="submit" class="flex items-center w-full px-4 py-3 text-red-600 hover:bg-gray-100">
                             <i class="fas fa-sign-out-alt mr-3"></i>
                             <span>Logout</span>
                         </button>
-                    </form>
+                    </form> --}}
                 </div>
             </div>
         </div>

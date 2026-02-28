@@ -17,20 +17,20 @@
 </head>
 <body class="bg-gray-50">
     <div class="flex min-h-screen">
-        @include('layouts.sidebar')
+        @include('admin.layouts.partials.sidebar')
         
         <div class="flex-1 flex flex-col overflow-hidden">
-            @include('layouts.header')
+            @include('admin.layouts.partials.header')
             
             <main class="flex-1 overflow-y-auto p-4 md:p-6">
                 @yield('content')
             </main>
             
-            @include('layouts.footer')
+            @include('admin.layouts.partials.footer')
         </div>
     </div>
     
-    @include('partials.scripts')
+    @include('admin.layouts.partials.script')
     @stack('scripts')
 </body>
 </html>

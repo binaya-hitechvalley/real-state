@@ -40,68 +40,39 @@
                     <span class="ml-3 font-medium sidebar-text">Dashboard</span>
                 </a>
             </li>
-            
-            <!-- Dropdown Menu Example 1 -->
-            <li class="dropdown-parent">
-                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100">
-                    <div class="flex items-center">
-                        <i class="fas fa-users text-blue-500 w-5"></i>
-                        <span class="ml-3 font-medium sidebar-text">User Management</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-gray-400 text-xs sidebar-text"></i>
-                </a>
-                <ul class="dropdown-menu mt-1 ml-8 space-y-1 hidden">
-                    <li><a href="{{ route('users.index') }}" class="block p-2 rounded hover:bg-gray-100 sidebar-text">All Users</a></li>
-                    <li><a href="{{ route('users.create') }}" class="block p-2 rounded hover:bg-gray-100 sidebar-text">Add New User</a></li>
-                    <li><a href="{{ route('roles.index') }}" class="block p-2 rounded hover:bg-gray-100 sidebar-text">User Roles</a></li>
-                    <li><a href="{{ route('permissions.index') }}" class="block p-2 rounded hover:bg-gray-100 sidebar-text">Permissions</a></li>
-                </ul>
-            </li>
-            
-            <!-- Dropdown Menu Example 2 -->
-            <li class="dropdown-parent">
-                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100">
-                    <div class="flex items-center">
-                        <i class="fas fa-shopping-cart text-blue-500 w-5"></i>
-                        <span class="ml-3 font-medium sidebar-text">Orders</span>
-                        <span class="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full sidebar-text">12</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-gray-400 text-xs sidebar-text"></i>
-                </a>
-                <ul class="dropdown-menu mt-1 ml-8 space-y-1 hidden">
-                    <li><a href="{{ route('orders.index') }}" class="block p-2 rounded hover:bg-gray-100 sidebar-text">All Orders</a></li>
-                    <li><a href="{{ route('orders.pending') }}" class="block p-2 rounded hover:bg-gray-100 sidebar-text">Pending Orders</a></li>
-                    <li><a href="{{ route('orders.completed') }}" class="block p-2 rounded hover:bg-gray-100 sidebar-text">Completed Orders</a></li>
-                    <li><a href="{{ route('orders.reports') }}" class="block p-2 rounded hover:bg-gray-100 sidebar-text">Order Reports</a></li>
-                </ul>
-            </li>
-            
             <li>
-                <a href="{{ route('analytics') }}" class="flex items-center p-3 rounded-lg {{ Request::routeIs('analytics') ? 'active-sidebar-item' : 'hover:bg-gray-100' }}">
-                    <i class="fas fa-chart-bar text-blue-500 w-5"></i>
-                    <span class="ml-3 font-medium sidebar-text">Analytics</span>
+                <a href="{{ route('admin.sliders.index') }}" class="flex items-center p-3 rounded-lg {{ Request::routeIs('admin.sliders.*') ? 'active-sidebar-item' : 'hover:bg-gray-100' }}">
+                    <i class="fas fa-images text-blue-500 w-5"></i>
+                    <span class="ml-3 font-medium sidebar-text">Sliders</span>
                 </a>
             </li>
-            
-            <!-- Dropdown Menu Example 3 -->
-            <li class="dropdown-parent">
-                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100">
-                    <div class="flex items-center">
-                        <i class="fas fa-cog text-blue-500 w-5"></i>
-                        <span class="ml-3 font-medium sidebar-text">Settings</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-gray-400 text-xs sidebar-text"></i>
+            <li>
+                <a href="{{ route('admin.property-types.index') }}" class="flex items-center p-3 rounded-lg {{ Request::routeIs('admin.property-types.*') ? 'active-sidebar-item' : 'hover:bg-gray-100' }}">
+                    <i class="fas fa-building text-blue-500 w-5"></i>
+                    <span class="ml-3 font-medium sidebar-text">Property Types</span>
                 </a>
-                <ul class="dropdown-menu mt-1 ml-8 space-y-1 hidden">
-                    <li><a href="{{ route('settings.general') }}" class="block p-2 rounded hover:bg-gray-100 sidebar-text">General Settings</a></li>
-                    <li><a href="{{ route('settings.notifications') }}" class="block p-2 rounded hover:bg-gray-100 sidebar-text">Notifications</a></li>
-                    <li><a href="{{ route('settings.security') }}" class="block p-2 rounded hover:bg-gray-100 sidebar-text">Security</a></li>
-                    <li><a href="{{ route('settings.billing') }}" class="block p-2 rounded hover:bg-gray-100 sidebar-text">Billing</a></li>
-                </ul>
+            </li>
+            <li>
+                <a href="{{ route('admin.business-types.index') }}" class="flex items-center p-3 rounded-lg {{ Request::routeIs('admin.business-types.*') ? 'active-sidebar-item' : 'hover:bg-gray-100' }}">
+                    <i class="fas fa-briefcase text-blue-500 w-5"></i>
+                    <span class="ml-3 font-medium sidebar-text">Business Types</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.properties.index') }}" class="flex items-center p-3 rounded-lg {{ Request::routeIs('admin.properties.*') ? 'active-sidebar-item' : 'hover:bg-gray-100' }}">
+                    <i class="fas fa-home text-blue-500 w-5"></i>
+                    <span class="ml-3 font-medium sidebar-text">Properties</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.property-features.index') }}" class="flex items-center p-3 rounded-lg {{ Request::routeIs('admin.property-features.*') ? 'active-sidebar-item' : 'hover:bg-gray-100' }}">
+                    <i class="fas fa-list text-blue-500 w-5"></i>
+                    <span class="ml-3 font-medium sidebar-text">Property Features</span>
+                </a>
             </li>
         </ul>
         
-        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-8 mb-4 sidebar-text">Support</p>
+        {{-- <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-8 mb-4 sidebar-text">Support</p>
         <ul class="space-y-2">
             <li>
                 <a href="{{ route('help') }}" class="flex items-center p-3 rounded-lg hover:bg-gray-100">
@@ -115,7 +86,7 @@
                     <span class="ml-3 font-medium sidebar-text">Contact</span>
                 </a>
             </li>
-        </ul>
+        </ul> --}}
     </nav>
     
     <!-- Sidebar Footer with Dark Mode Toggle -->
@@ -123,7 +94,7 @@
         <div class="flex items-center text-gray-600">
             <i id="darkModeIcon" class="fas {{ session('darkMode', false) ? 'fa-sun' : 'fa-moon' }}"></i>
             <span class="ml-2 text-sm sidebar-text">{{ session('darkMode', false) ? 'Light Mode' : 'Dark Mode' }}</span>
-            <form id="darkModeForm" action="{{ route('toggle-dark-mode') }}" method="POST" class="ml-auto">
+            <form id="darkModeForm" action="#" method="POST" class="ml-auto">
                 @csrf
                 <button type="button" id="darkModeToggle" class="bg-gray-300 w-10 h-5 rounded-full relative focus:outline-none">
                     <div id="darkModeToggleCircle" class="bg-white w-4 h-4 rounded-full absolute top-0.5 transition-transform duration-300 {{ session('darkMode', false) ? 'left-5' : 'left-0.5' }}"></div>
