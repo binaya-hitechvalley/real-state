@@ -15,13 +15,16 @@ class SlidersDataTable
     public function dataTable()
     {
         $query = Slider::with('image')->ordered();
+        $is_active = request('is_active') ?? null;
 
-        // Apply filters
-        if ($title = request('title')) {
-            $query->where('title', 'like', '%' . $title . '%');
+        // Apply filters only if present
+        $hasTitle = request()->filled('title');
+        $hasActive = request()->has('is_active') && request('is_active') !== '';
+
+        if ($hasTitle) {
+            $query->where('title', 'like', '%' . request('title') . '%');
         }
-
-        if (request()->has('is_active') && request('is_active') !== '') {
+        if ($hasActive) {
             $query->where('is_active', request('is_active'));
         }
 
