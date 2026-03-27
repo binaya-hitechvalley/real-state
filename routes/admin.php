@@ -17,6 +17,9 @@ Route::prefix('admin')->group(function () {
     Route::resource('sliders', SliderController::class)->names('admin.sliders');
     Route::post('sliders/{id}/toggle-status', [SliderController::class, 'toggleStatus'])->name('admin.sliders.toggle-status');
     Route::post('sliders/update-order', [SliderController::class, 'updateOrder'])->name('admin.sliders.update-order');
+    Route::post('sliders/bulk-activate', [SliderController::class, 'bulkActivate'])->name('admin.sliders.bulk-activate');
+    Route::post('sliders/bulk-deactivate', [SliderController::class, 'bulkDeactivate'])->name('admin.sliders.bulk-deactivate');
+    Route::post('sliders/bulk-delete', [SliderController::class, 'bulkDelete'])->name('admin.sliders.bulk-delete');
     
     // Property Types Management
     Route::resource('property-types', PropertyTypeController::class)->names('admin.property-types');

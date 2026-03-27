@@ -3,16 +3,17 @@
 namespace App\Services\Admin;
 
 use App\Models\Slider;
+use App\Services\Admin\ImageService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\UploadedFile;
 
 class SliderService
 {
-    protected ImageService $imageService;
+    protected $imageService;
 
-    public function __construct(ImageService $imageService)
+    public function __construct(ImageService $imageService = null)
     {
-        $this->imageService = $imageService;
+        $this->imageService = $imageService ?: new ImageService();
     }
     /**
      * Get paginated list of sliders with optional filters.
@@ -172,9 +173,47 @@ class SliderService
     public function updateOrder(array $order): bool
     {
         return DB::transaction(function () use ($order) {
-            foreach ($order as $id => $position) {
-                Slider::where('id', $id)->update(['order_column' => $position]);
+            foreach ($order as $index => $id) {
+                Slider::where('id', $id)->update(['order_column' => $index + 1]);
             }
+            return true;
+        });
+    }
+
+    /**
+     * Bulk update status for multiple sliders.
+     *
+     * @param array $ids
+     * @param bool $status
+     * @return bool
+     */
+    public function bulkUpdateStatus(array $ids, bool $status): bool
+    {
+        return DB::transaction(function () use ($ids, $status) {
+            Slider::whereIn('id', $ids)->update(['is_active' => $status]);
+            return true;
+        });
+    }
+
+    /**
+     * Bulk delete multiple sliders.
+     *
+     * @param array $ids
+     * @return bool
+     */
+    public function bulkDelete(array $ids): bool
+    {
+        return DB::transaction(function () use ($ids) {
+            $sliders = Slider::with('image')->whereIn('id', $ids)->get();
+            
+            foreach ($sliders as $slider) {
+                // Delete associated image using ImageService
+                if ($slider->image && $slider->image instanceof \App\Models\Image) {
+                    $this->imageService->deleteImage($slider->image);
+                }
+                $slider->delete();
+            }
+            
             return true;
         });
     }

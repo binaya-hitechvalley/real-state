@@ -56,6 +56,18 @@ class Image extends Model
      */
     public function getUrlAttribute(): string
     {
-        return asset('storage/' . $this->full_path);
+        if (!$this->directory || !$this->file_name) {
+            return '';
+        }
+        
+        $path = $this->directory . '/' . $this->file_name;
+        
+        // Check if file exists in storage
+        if (\Storage::disk('public')->exists($path)) {
+            return \Storage::url($path);
+        }
+        
+        // Fallback to asset helper
+        return asset('storage/' . $path);
     }
 }

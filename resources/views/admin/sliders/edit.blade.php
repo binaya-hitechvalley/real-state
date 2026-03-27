@@ -78,7 +78,18 @@
                     Current Image
                 </label>
                 <div class="border border-gray-300 rounded-lg p-4 inline-block">
-                    <img src="{{ $slider->image->url }}" alt="{{ $slider->image->alt_text }}" class="max-h-48 rounded">
+                    <img src="{{ $slider->image->url }}" alt="{{ $slider->image->alt_text ?? $slider->title }}" class="max-h-48 rounded" 
+                         onerror="this.src='https://via.placeholder.com/400x200?text=Image+Not+Found'; this.onerror=null;">
+                    <p class="text-xs text-gray-500 mt-2">URL: {{ $slider->image->url }}</p>
+                </div>
+            </div>
+            @else
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Current Image
+                </label>
+                <div class="border border-gray-300 rounded-lg p-4 inline-block">
+                    <p class="text-gray-500">No image uploaded</p>
                 </div>
             </div>
             @endif
@@ -178,6 +189,13 @@
 
 @push('scripts')
 <script>
+// Debug information
+console.log('Slider data:', @json($slider));
+@if($slider->image)
+console.log('Image data:', @json($slider->image));
+console.log('Image URL:', '{{ $slider->image->url }}');
+@endif
+
 function previewImage(event) {
     const preview = document.getElementById('imagePreview');
     const file = event.target.files[0];

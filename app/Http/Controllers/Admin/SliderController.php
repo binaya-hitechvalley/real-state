@@ -89,9 +89,18 @@ class SliderController extends Controller
      */
     public function toggleStatus(int $id)
     {
-        $slider = $this->sliderService->find($id);
-        $this->sliderService->toggleStatus($slider);
-        return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
+        try {
+            $slider = $this->sliderService->find($id);
+            if (!$slider) {
+                return response()->json(['success' => false, 'message' => 'Slider not found.'], 404);
+            }
+            
+            $this->sliderService->toggleStatus($slider);
+            return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
+        } catch (\Exception $e) {
+            \Log::error('Toggle status error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error updating status.'], 500);
+        }
     }
 
     /**
@@ -101,5 +110,35 @@ class SliderController extends Controller
     {
         $this->sliderService->updateOrder($request->input('order', []));
         return response()->json(['success' => true, 'message' => 'Order updated successfully.']);
+    }
+
+    /**
+     * Bulk activate sliders.
+     */
+    public function bulkActivate(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        $this->sliderService->bulkUpdateStatus($ids, true);
+        return response()->json(['success' => true, 'message' => 'Sliders activated successfully.']);
+    }
+
+    /**
+     * Bulk deactivate sliders.
+     */
+    public function bulkDeactivate(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        $this->sliderService->bulkUpdateStatus($ids, false);
+        return response()->json(['success' => true, 'message' => 'Sliders deactivated successfully.']);
+    }
+
+    /**
+     * Bulk delete sliders.
+     */
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        $this->sliderService->bulkDelete($ids);
+        return response()->json(['success' => true, 'message' => 'Sliders deleted successfully.']);
     }
 }

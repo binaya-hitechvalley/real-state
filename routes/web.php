@@ -1,10 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Frontend\HomeController;
 
-Route::get('/', function () {
-    return view('frontend.home');
-});
+Route::get('/', [HomeController::class, 'index']);
 
 // Routes based on Flowchart
 Route::get('/properties', function () {

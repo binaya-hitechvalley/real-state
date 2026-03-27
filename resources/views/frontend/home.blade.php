@@ -28,10 +28,68 @@
 <!-- ==========================================
      HERO SECTION
      ========================================== -->
+@if($sliders->count() > 0)
 <section class="relative overflow-hidden group">
     <div class="swiper hero-swiper-container">
         <div class="swiper-wrapper">
-            <!-- Slide 1 -->
+            @foreach($sliders as $slider)
+            <div class="swiper-slide hero-slide-bg" style="background-image: url('{{ $slider->image ? $slider->image->url : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80' }}');">
+                <div class="hero-overlay"></div>
+                <div class="container mx-auto px-4 md:px-8 h-full flex items-center relative z-10 pt-20">
+                    <div class="max-w-4xl text-left">
+                        @if($slider->title)
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-6 shadow-xl shadow-blue-900/20 transform hover:-translate-y-1 transition-transform">
+                            <span class="w-2.5 h-2.5 rounded-full bg-accent animate-pulse"></span>
+                            <span class="text-blue-100 font-bold text-xs tracking-[0.2em] uppercase">{{ $slider->title }}</span>
+                        </div>
+                        @endif
+                        
+                        @if($slider->subtitle)
+                        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[1.1] mb-8 tracking-tighter">
+                            {!! $slider->subtitle !!}
+                        </h1>
+                        @endif
+                        
+                        @if($slider->link)
+                        <div class="flex flex-col sm:flex-row gap-5">
+                            <a href="{{ $slider->link }}" class="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white bg-gradient-to-r from-primary to-accent rounded-full overflow-hidden shadow-xl shadow-blue-500/20 transition-all hover:shadow-blue-500/40 hover:scale-105">
+                                <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
+                                <span class="relative flex items-center gap-2">Learn More <i class="fas fa-arrow-right text-sm"></i></span>
+                            </a>
+                        </div>
+                        @endif
+                    </div>
+                    
+                    <!-- Floating Stats Card (Desktop only) - Show only on first slide -->
+                    @if($loop->first)
+                    <div class="hidden lg:flex absolute right-8 bottom-16 glass-card p-6 rounded-3xl flex-col gap-6 max-w-xs transform hover:-translate-y-2 transition-transform duration-500">
+                        <div class="border-b border-white/10 pb-4">
+                            <div class="text-4xl font-black text-white mb-1 tracking-tight">15+ <span class="text-accent text-2xl">Years</span></div>
+                            <div class="text-blue-200 text-sm font-medium">Market Leadership</div>
+                        </div>
+                        <div>
+                            <div class="text-4xl font-black text-white mb-1 tracking-tight">100%</div>
+                            <div class="text-blue-200 text-sm font-medium">Verified Documentation</div>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endforeach
+        </div>
+        
+        <div class="swiper-pagination !bottom-8"></div>
+
+        <!-- Navigation Buttons -->
+        <div class="swiper-button-prev !text-white !w-14 !h-14 !bg-white/10 backdrop-blur-md rounded-full border border-white/20 hover:bg-primary hover:border-primary transition-all opacity-0 group-hover:opacity-100 hidden md:flex after:!text-xl !left-4 md:!left-8"></div>
+        <div class="swiper-button-next !text-white !w-14 !h-14 !bg-white/10 backdrop-blur-md rounded-full border border-white/20 hover:bg-primary hover:border-primary transition-all opacity-0 group-hover:opacity-100 hidden md:flex after:!text-xl !right-4 md:!right-8"></div>
+    </div>
+</section>
+@else
+<!-- Fallback hero section if no sliders exist -->
+<section class="relative overflow-hidden group">
+    <div class="hero-swiper-container">
+        <div class="swiper-wrapper">
             <div class="swiper-slide hero-slide-bg" style="background-image: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');">
                 <div class="hero-overlay"></div>
                 <div class="container mx-auto px-4 md:px-8 h-full flex items-center relative z-10 pt-20">
@@ -71,40 +129,10 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Slide 2 -->
-            <div class="swiper-slide hero-slide-bg" style="background-image: url('https://images.unsplash.com/photo-1542314831-c6a4d14b189a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');">
-                <div class="hero-overlay"></div>
-                <div class="container mx-auto px-4 md:px-8 h-full flex items-center relative z-10 pt-20">
-                    <div class="max-w-4xl text-left">
-                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-6 shadow-xl shadow-blue-900/20">
-                            <span class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse"></span>
-                            <span class="text-blue-100 font-bold text-xs tracking-[0.2em] uppercase">No Middlemen</span>
-                        </div>
-                        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[1.1] mb-8 tracking-tighter">
-                            Direct <br />
-                            <span class="text-gradient bg-gradient-to-r from-accent via-blue-200 to-white">Ownership.</span>
-                        </h1>
-                        <p class="text-lg md:text-2xl text-blue-50/80 mb-12 max-w-2xl font-light leading-relaxed">
-                            We develop, own, and offer select real estate projects offering maximum value and absolute transparency to our investors.
-                        </p>
-                        <div class="flex flex-col sm:flex-row gap-5">
-                            <a href="#contact" class="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white bg-gradient-to-r from-primary to-accent rounded-full overflow-hidden shadow-xl shadow-blue-500/20 transition-all hover:shadow-blue-500/40 hover:scale-105">
-                                <span class="relative flex items-center gap-2">Consult An Expert <i class="fas fa-headset text-sm"></i></span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-        
-        <div class="swiper-pagination !bottom-8"></div>
-
-        <!-- Navigation Buttons -->
-        <div class="swiper-button-prev !text-white !w-14 !h-14 !bg-white/10 backdrop-blur-md rounded-full border border-white/20 hover:bg-primary hover:border-primary transition-all opacity-0 group-hover:opacity-100 hidden md:flex after:!text-xl !left-4 md:!left-8"></div>
-        <div class="swiper-button-next !text-white !w-14 !h-14 !bg-white/10 backdrop-blur-md rounded-full border border-white/20 hover:bg-primary hover:border-primary transition-all opacity-0 group-hover:opacity-100 hidden md:flex after:!text-xl !right-4 md:!right-8"></div>
     </div>
 </section>
+@endif
 
 <!-- ==========================================
      EXPLORE CATEGORIES

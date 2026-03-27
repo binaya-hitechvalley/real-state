@@ -15,11 +15,11 @@ class SlidersDataTable
     public function dataTable()
     {
         $query = Slider::with('image')->ordered();
-        $is_active = request('is_active') ?? null;
+        $is_active = request('is_active');
 
         // Apply filters only if present
         $hasTitle = request()->filled('title');
-        $hasActive = request()->has('is_active') && request('is_active') !== '';
+        $hasActive = request()->filled('is_active');
 
         if ($hasTitle) {
             $query->where('title', 'like', '%' . request('title') . '%');
@@ -29,17 +29,24 @@ class SlidersDataTable
         }
 
         return DataTables::eloquent($query)
+            ->addColumn('bulk_select', function (Slider $slider) {
+                return '<input type="checkbox" class="bulk-checkbox-item" data-slider-id="' . $slider->id . '">';
+            })
+            ->addColumn('drag_handle', function (Slider $slider) {
+                return '<i class="fas fa-grip-vertical drag-handle"></i>';
+            })
             ->addColumn('image', function (Slider $slider) {
                 if ($slider->image) {
-                    return '<img src="' . $slider->image->url . '" alt="' . $slider->image->alt_text . '" class="h-16 w-24 object-cover rounded">';
+                    return '<a href="#" class="image-preview" data-image-url="' . $slider->image->url . '">
+                        <img src="' . $slider->image->url . '" alt="' . $slider->image->alt_text . '" class="h-16 w-24 object-cover rounded cursor-pointer hover:opacity-80 transition">
+                    </a>';
                 }
                 return '<span class="text-gray-400 text-sm">No image</span>';
             })
             ->addColumn('status', function (Slider $slider) {
-                if ($slider->is_active) {
-                    return '<span class="px-3 py-1 text-xs bg-green-100 text-green-800 rounded-full">Active</span>';
-                }
-                return '<span class="px-3 py-1 text-xs bg-red-100 text-red-800 rounded-full">Inactive</span>';
+                $statusClass = $slider->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                $statusText = $slider->is_active ? 'Active' : 'Inactive';
+                return '<span class="px-3 py-1 text-xs ' . $statusClass . ' rounded-full status-toggle">' . $statusText . '</span>';
             })
             ->addColumn('action', function (Slider $slider) {
                 $editUrl = route('admin.sliders.edit', $slider->id);
@@ -50,7 +57,7 @@ class SlidersDataTable
                         <a href="' . $editUrl . '" class="text-blue-600 hover:text-blue-900" title="Edit">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <button onclick="toggleStatus(' . $slider->id . ')" class="text-yellow-600 hover:text-yellow-900" title="Toggle Status">
+                        <button onclick="toggleStatus(' . $slider->id . ')" class="text-yellow-600 hover:text-yellow-900 status-toggle" title="Toggle Status">
                             <i class="fas fa-toggle-on"></i>
                         </button>
                         <form action="' . $deleteUrl . '" method="POST" class="inline-block" onsubmit="return confirm(\'Are you sure you want to delete this slider?\');">
@@ -66,7 +73,13 @@ class SlidersDataTable
             ->editColumn('subtitle', function (Slider $slider) {
                 return $slider->subtitle ?? '-';
             })
-            ->rawColumns(['image', 'status', 'action'])
+            ->rawColumns(['bulk_select', 'drag_handle', 'image', 'status', 'action'])
+            ->setRowId('id')
+            ->setRowAttr([
+                'data-slider-id' => function (Slider $slider) {
+                    return $slider->id;
+                }
+            ])
             ->make(true);
     }
 }
