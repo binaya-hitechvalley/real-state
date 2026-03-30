@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Municipality extends Model
+class District extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -15,12 +15,11 @@ class Municipality extends Model
      */
     protected $fillable = [
         'state_id',
-        'district_id',
         'name',
     ];
 
     /**
-     * Get the state that owns the municipality.
+     * Get the state that owns the district.
      */
     public function state(): BelongsTo
     {
@@ -28,18 +27,10 @@ class Municipality extends Model
     }
 
     /**
-     * Get the district that owns the municipality.
+     * Get the municipalities for the district.
      */
-    public function district(): BelongsTo
+    public function municipalities(): HasMany
     {
-        return $this->belongsTo(District::class);
-    }
-
-    /**
-     * Get the properties for the municipality.
-     */
-    public function properties(): HasMany
-    {
-        return $this->hasMany(Property::class);
+        return $this->hasMany(Municipality::class);
     }
 }

@@ -8,6 +8,7 @@ use App\Services\Admin\PropertyService;
 use App\Models\PropertyType;
 use App\Models\BusinessType;
 use App\Models\State;
+use App\Models\District;
 use Illuminate\Http\Request;
 
 class PropertyController extends Controller
@@ -44,8 +45,9 @@ class PropertyController extends Controller
         $propertyTypes = PropertyType::orderBy('name')->get();
         $businessTypes = BusinessType::orderBy('name')->get();
         $states = State::orderBy('name')->get();
+        $districts = District::orderBy('name')->get();
         
-        return view('admin.properties.create', compact('propertyTypes', 'businessTypes', 'states'));
+        return view('admin.properties.create', compact('propertyTypes', 'businessTypes', 'states', 'districts'));
     }
 
     /**
@@ -53,6 +55,20 @@ class PropertyController extends Controller
      */
     public function store(PropertyRequest $request)
     {
+        // Debug: Check if images are received
+        \Log::info('Property creation request received');
+        \Log::info('Images data:', ['images' => $request->file('images') ? 'Present' : 'Missing']);
+        
+        if ($request->file('images')) {
+            \Log::info('Number of images:', ['count' => count($request->file('images'))]);
+            foreach ($request->file('images') as $index => $image) {
+                \Log::info("Image {$index}", [
+                    'name' => $image->getClientOriginalName(),
+                    'size' => $image->getSize() . ' bytes'
+                ]);
+            }
+        }
+        
         $this->propertyService->create($request->validated());
         return redirect()->route('admin.properties.index')->with('success', 'Property created successfully.');
     }
@@ -66,9 +82,10 @@ class PropertyController extends Controller
         $propertyTypes = PropertyType::orderBy('name')->get();
         $businessTypes = BusinessType::orderBy('name')->get();
         $states = State::orderBy('name')->get();
+        $districts = District::orderBy('name')->get();
         $municipalities = $property->state->municipalities()->orderBy('name')->get();
         
-        return view('admin.properties.edit', compact('property', 'propertyTypes', 'businessTypes', 'states', 'municipalities'));
+        return view('admin.properties.edit', compact('property', 'propertyTypes', 'businessTypes', 'states', 'districts', 'municipalities'));
     }
 
     /**
@@ -134,6 +151,28 @@ class PropertyController extends Controller
     {
         $state = State::findOrFail($stateId);
         $municipalities = $state->municipalities()->orderBy('name')->get();
+        
+        return response()->json($municipalities);
+    }
+
+    /**
+     * Get districts by state.
+     */
+    public function getDistricts(int $stateId)
+    {
+        $state = State::findOrFail($stateId);
+        $districts = $state->districts()->orderBy('name')->get();
+        
+        return response()->json($districts);
+    }
+
+    /**
+     * Get municipalities by district.
+     */
+    public function getMunicipalitiesByDistrict(int $districtId)
+    {
+        $district = District::findOrFail($districtId);
+        $municipalities = $district->municipalities()->orderBy('name')->get();
         
         return response()->json($municipalities);
     }

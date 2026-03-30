@@ -19,6 +19,7 @@ class Property extends Model
         'property_type_id',
         'business_type_id',
         'state_id',
+        'district_id',
         'municipality_id',
         'title',
         'slug',
@@ -26,6 +27,7 @@ class Property extends Model
         'price',
         'price_period',
         'land_area_size',
+        'land_area_unit',
         'address',
         'latitude',
         'longitude',
@@ -81,6 +83,14 @@ class Property extends Model
     public function state(): BelongsTo
     {
         return $this->belongsTo(State::class);
+    }
+
+    /**
+     * Get the district.
+     */
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
     }
 
     /**

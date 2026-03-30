@@ -33,6 +33,8 @@ Route::prefix('admin')->group(function () {
     Route::delete('properties/{id}/images/{imageId}', [PropertyController::class, 'deleteImage'])->name('admin.properties.delete-image');
     Route::post('properties/{id}/images/{imageId}/set-primary', [PropertyController::class, 'setPrimaryImage'])->name('admin.properties.set-primary-image');
     Route::get('properties/municipalities/{stateId}', [PropertyController::class, 'getMunicipalities'])->name('admin.properties.municipalities');
+    Route::get('properties/districts/{stateId}', [PropertyController::class, 'getDistricts'])->name('admin.properties.districts');
+    Route::get('properties/municipalities-by-district/{districtId}', [PropertyController::class, 'getMunicipalitiesByDistrict'])->name('admin.properties.municipalities-by-district');
     
     // Property Features Management
     Route::resource('property-features', PropertyFeatureController::class)->names('admin.property-features');

@@ -35,17 +35,26 @@ class PropertyService
      */
     public function create(array $data): Property
     {
+        // Debug: Check if images are in the data
+        \Log::info('PropertyService::create called', ['data_keys' => array_keys($data)]);
+        
         // Handle images separately
         $images = $data['images'] ?? [];
         $primaryImageIndex = $data['primary_image_index'] ?? 0;
         unset($data['images'], $data['primary_image_index']);
+        
+        \Log::info('Images to upload:', ['count' => count($images), 'primary_index' => $primaryImageIndex]);
 
         // Create property
         $property = Property::create($data);
+        \Log::info('Property created with ID:', ['id' => $property->id]);
 
         // Upload images
         if (!empty($images)) {
-            $this->imageService->uploadMultipleImages($property, $images, 'properties', $primaryImageIndex);
+            $uploadedImages = $this->imageService->uploadMultipleImages($property, $images, 'properties', null, $primaryImageIndex);
+            \Log::info('Images uploaded successfully', ['count' => count($uploadedImages)]);
+        } else {
+            \Log::info('No images to upload');
         }
 
         return $property->load(['propertyType', 'businessType', 'state', 'municipality', 'images']);
@@ -66,10 +75,10 @@ class PropertyService
 
         // Upload new images if provided
         if (!empty($images)) {
-            $this->imageService->uploadMultipleImages($property, $images, 'properties', $primaryImageIndex);
+            $this->imageService->uploadMultipleImages($property, $images, 'properties', null, $primaryImageIndex);
         } elseif ($primaryImageIndex !== null) {
             // Just update primary image if specified
-            $this->imageService->setPrimaryImage($property, $primaryImageIndex);
+            $this->imageService->setPrimaryImageByIndex($property, $primaryImageIndex);
         }
 
         return $property->load(['propertyType', 'businessType', 'state', 'municipality', 'images']);

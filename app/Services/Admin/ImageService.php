@@ -198,6 +198,33 @@ class ImageService
     }
 
     /**
+     * Set an image as primary by index for a model.
+     * Unsets other images as primary (for morphMany).
+     *
+     * @param Model $model The parent model
+     * @param int $index The index of the image to set as primary
+     * @return Image|null
+     */
+    public function setPrimaryImageByIndex(Model $model, int $index): ?Image
+    {
+        $images = $model->images()->get();
+        
+        if (!isset($images[$index])) {
+            return null;
+        }
+
+        $image = $images[$index];
+        
+        // Unset all images as primary
+        $model->images()->update(['is_primary' => false]);
+
+        // Set this image as primary
+        $image->update(['is_primary' => true]);
+
+        return $image->fresh();
+    }
+
+    /**
      * Set an image as primary for a model.
      * Unsets other images as primary (for morphMany).
      *
@@ -213,7 +240,7 @@ class ImageService
         // Set this image as primary
         $image->update(['is_primary' => true]);
 
-        return $image->fresh();
+        return $image;
     }
 
     /**

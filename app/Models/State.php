@@ -26,6 +26,14 @@ class State extends Model
     }
 
     /**
+     * Get the districts for the state.
+     */
+    public function districts(): HasMany
+    {
+        return $this->hasMany(District::class);
+    }
+
+    /**
      * Get the properties for the state.
      */
     public function properties(): HasMany
