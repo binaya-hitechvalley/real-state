@@ -269,8 +269,11 @@
                 <!-- Filter Tabs -->
                 <div class="inline-flex bg-white rounded-full p-1 border border-slate-200 shadow-sm self-start mb-10" id="property-tabs">
                     <button class="nav-tab active px-5 py-2.5 rounded-full text-sm font-bold text-white bg-slate-900 shadow-md transition-all" data-target="all">All</button>
-                    <button class="nav-tab px-5 py-2.5 rounded-full text-sm font-bold text-slate-500 hover:text-slate-900 transition-all" data-target="sell">For Sale</button>
-                    <button class="nav-tab px-5 py-2.5 rounded-full text-sm font-bold text-slate-500 hover:text-slate-900 transition-all" data-target="rent">For Rent</button>
+                    @foreach($businessTypes as $type)
+                        <button class="nav-tab px-5 py-2.5 rounded-full text-sm font-bold text-slate-500 hover:text-slate-900 transition-all" data-target="{{ $type->slug }}">
+                            {{ $type->name }}
+                        </button>
+                    @endforeach
                 </div>
 
                 <!-- Custom Slider Controls -->
@@ -289,14 +292,26 @@
                 <div class="swiper property-swiper pb-8 pr-[1rem]">
                     <div class="swiper-wrapper">
                         
-                        <!-- Slide 1 (Sale) -->
-                        <div class="swiper-slide property-card" data-category="sell" style="width: 320px;">
+                        <!-- Dynamic Property Cards -->
+                        @foreach($featuredProperties as $property)
+                        <div class="swiper-slide property-card" data-category="{{ $property->businessType->slug ?? 'all' }}" style="width: 320px;">
                             <div class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-900/10 border border-slate-100 transition-all duration-300">
                                 <div class="relative h-56 overflow-hidden m-2 rounded-[1.5rem]">
-                                    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Villa" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                    @if($property->primaryImage)
+                                        <img src="{{ $property->primaryImage->url }}" alt="{{ $property->primaryImage->alt_text ?? $property->title }}" 
+                                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                    @else
+                                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                                             alt="{{ $property->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                    @endif
                                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent"></div>
                                     <div class="absolute top-3 left-3 flex gap-2">
-                                        <span class="px-3 py-1 bg-white/95 backdrop-blur rounded-full text-primary text-[10px] font-black tracking-wider uppercase shadow-sm">For Sale</span>
+                                        @if($property->is_featured)
+                                            <span class="px-3 py-1 bg-accent text-white backdrop-blur rounded-full text-[10px] font-black tracking-wider uppercase shadow-sm">Featured</span>
+                                        @endif
+                                        <span class="px-3 py-1 bg-white/95 backdrop-blur rounded-full text-primary text-[10px] font-black tracking-wider uppercase shadow-sm">
+                                            {{ $property->businessType->name ?? 'For Sale' }}
+                                        </span>
                                     </div>
                                     <div class="absolute top-3 right-3">
                                         <button class="w-8 h-8 bg-white/95 backdrop-blur rounded-full text-slate-400 hover:text-red-500 flex items-center justify-center shadow-sm transition-colors">
@@ -304,194 +319,64 @@
                                         </button>
                                     </div>
                                     <div class="absolute bottom-3 left-3">
-                                        <span class="px-2.5 py-1 bg-slate-900/80 backdrop-blur text-white text-[10px] font-bold rounded-full"><i class="fas fa-camera mr-1"></i> 5</span>
+                                        <span class="px-2.5 py-1 bg-slate-900/80 backdrop-blur text-white text-[10px] font-bold rounded-full">
+                                            <i class="fas fa-camera mr-1"></i> {{ $property->images->count() ?? 0 }}
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="p-5">
-                                    <div class="text-xl font-black text-slate-900 mb-1">Rs. 4.5 Cr</div>
-                                    <h3 class="text-base font-bold text-slate-800 mb-1 truncate"><a href="#" class="hover:text-primary transition-colors">Modern Villa in City</a></h3>
-                                    <p class="text-slate-500 text-xs font-medium mb-4 truncate"><i class="fas fa-map-marker-alt text-accent mr-1"></i> Boudha, Kathmandu</p>
+                                    <div class="text-xl font-black text-slate-900 mb-1">
+                                        {{ $property->price_period === 'monthly' ? 'Rs. ' . number_format($property->price) . '/mo' : 'Rs. ' . number_format($property->price) }}
+                                    </div>
+                                    <h3 class="text-base font-bold text-slate-800 mb-1 truncate">
+                                        <a href="{{ route('frontend.properties.show', $property->slug) }}" class="hover:text-primary transition-colors">
+                                            {{ $property->title }}
+                                        </a>
+                                    </h3>
+                                    <p class="text-slate-500 text-xs font-medium mb-4 truncate">
+                                        <i class="fas fa-map-marker-alt text-accent mr-1"></i> 
+                                        {{ $property->municipality->name ?? 'Location Not Specified' }}
+                                        @if($property->municipality && $property->municipality->district)
+                                            , {{ $property->municipality->district->name }}
+                                        @endif
+                                    </p>
                                     
                                     <div class="flex items-center justify-between border-t border-slate-100 pt-3">
                                         <div class="flex items-center gap-3 text-[11px] font-bold text-slate-600">
-                                            <span title="Beds" class="flex items-center gap-1"><i class="fas fa-bed text-primary/70"></i> 4</span>
-                                            <span title="Baths" class="flex items-center gap-1"><i class="fas fa-bath text-primary/70"></i> 3</span>
-                                            <span title="Area" class="flex items-center gap-1"><i class="fas fa-vector-square text-primary/70"></i> 6 Aana</span>
+                                            @if($property->land_area_size)
+                                                <span title="Area" class="flex items-center gap-1">
+                                                    <i class="fas fa-vector-square text-primary/70"></i> 
+                                                    {{ $property->land_area_size }} {{ $property->land_area_unit ?? 'sqft' }}
+                                                </span>
+                                            @endif
+                                            @if($property->price_period === 'monthly')
+                                                <span title="Monthly" class="flex items-center gap-1">
+                                                    <i class="fas fa-calendar text-primary/70"></i> Monthly
+                                                </span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Slide 2 (Sale) -->
-                        <div class="swiper-slide property-card" data-category="sell" style="width: 320px;">
-                            <div class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-900/10 border border-slate-100 transition-all duration-300">
-                                <div class="relative h-56 overflow-hidden m-2 rounded-[1.5rem]">
-                                    <img src="https://images.unsplash.com/photo-1542314831-c6a4d14b189a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Land" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent"></div>
-                                    <div class="absolute top-3 left-3 flex flex-wrap gap-2">
-                                        <span class="px-3 py-1 bg-accent text-white backdrop-blur rounded-full text-[10px] font-black tracking-wider uppercase shadow-sm">Hot Deal</span>
-                                        <span class="px-3 py-1 bg-white/95 backdrop-blur rounded-full text-primary text-[10px] font-black tracking-wider uppercase shadow-sm">For Sale</span>
-                                    </div>
-                                    <div class="absolute top-3 right-3">
-                                        <button class="w-8 h-8 bg-white/95 backdrop-blur rounded-full text-slate-400 hover:text-red-500 flex items-center justify-center shadow-sm transition-colors">
-                                            <i class="far fa-heart"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="p-5">
-                                    <div class="text-xl font-black text-slate-900 mb-1">Rs. 15 Cr</div>
-                                    <h3 class="text-base font-bold text-slate-800 mb-1 truncate"><a href="#" class="hover:text-primary transition-colors">Commercial Land</a></h3>
-                                    <p class="text-slate-500 text-xs font-medium mb-4 truncate"><i class="fas fa-map-marker-alt text-accent mr-1"></i> Tripureshwor, Ktm</p>
-                                    
-                                    <div class="flex items-center justify-between border-t border-slate-100 pt-3">
-                                        <div class="flex items-center gap-3 text-[11px] font-bold text-slate-600">
-                                            <span title="Road Access" class="flex items-center gap-1"><i class="fas fa-road text-primary/70"></i> 20 ft</span>
-                                            <span title="Area" class="flex items-center gap-1"><i class="fas fa-map text-primary/70"></i> 1 Ropani</span>
-                                        </div>
+                        @endforeach
+                        
+                        <!-- Fallback for no properties -->
+                        @if($featuredProperties->isEmpty())
+                        <div class="swiper-slide" style="width: 320px;">
+                            <div class="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-slate-100">
+                                <div class="relative h-56 overflow-hidden m-2 rounded-[1.5rem] bg-slate-100 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <i class="fas fa-home text-4xl text-slate-300 mb-3"></i>
+                                        <p class="text-slate-500 text-sm">No featured properties available</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Slide 3 (Rent) -->
-                        <div class="swiper-slide property-card" data-category="rent" style="width: 320px;">
-                            <div class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-900/10 border border-slate-100 transition-all duration-300">
-                                <div class="relative h-56 overflow-hidden m-2 rounded-[1.5rem]">
-                                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Apartment" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent"></div>
-                                    <div class="absolute top-3 left-3 flex gap-2">
-                                        <span class="px-3 py-1 bg-white/95 backdrop-blur rounded-full text-accent text-[10px] font-black tracking-wider uppercase shadow-sm">For Rent</span>
-                                    </div>
-                                    <div class="absolute top-3 right-3">
-                                        <button class="w-8 h-8 bg-white/95 backdrop-blur rounded-full text-slate-400 hover:text-red-500 flex items-center justify-center shadow-sm transition-colors">
-                                            <i class="far fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="absolute bottom-3 left-3">
-                                        <span class="px-2.5 py-1 bg-slate-900/80 backdrop-blur text-white text-[10px] font-bold rounded-full"><i class="fas fa-camera mr-1"></i> 8</span>
-                                    </div>
-                                </div>
-                                <div class="p-5">
-                                    <div class="text-xl font-black text-slate-900 mb-1">Rs. 85,000<span class="text-xs text-slate-400 font-medium">/mo</span></div>
-                                    <h3 class="text-base font-bold text-slate-800 mb-1 truncate"><a href="#" class="hover:text-primary transition-colors">Luxury Apartment</a></h3>
-                                    <p class="text-slate-500 text-xs font-medium mb-4 truncate"><i class="fas fa-map-marker-alt text-accent mr-1"></i> Jhamsikhel, Lalitpur</p>
-                                    
-                                    <div class="flex items-center justify-between border-t border-slate-100 pt-3">
-                                        <div class="flex items-center gap-3 text-[11px] font-bold text-slate-600">
-                                            <span title="Beds" class="flex items-center gap-1"><i class="fas fa-bed text-primary/70"></i> 2</span>
-                                            <span title="Baths" class="flex items-center gap-1"><i class="fas fa-bath text-primary/70"></i> 2</span>
-                                            <span title="Area" class="flex items-center gap-1"><i class="fas fa-vector-square text-primary/70"></i> 1200 sqft</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 4 (Rent) -->
-                        <div class="swiper-slide property-card" data-category="rent" style="width: 320px;">
-                            <div class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-900/10 border border-slate-100 transition-all duration-300">
-                                <div class="relative h-56 overflow-hidden m-2 rounded-[1.5rem]">
-                                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Office" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent"></div>
-                                    <div class="absolute top-3 left-3 flex gap-2">
-                                        <span class="px-3 py-1 bg-white/95 backdrop-blur rounded-full text-accent text-[10px] font-black tracking-wider uppercase shadow-sm">For Rent</span>
-                                    </div>
-                                    <div class="absolute top-3 right-3">
-                                        <button class="w-8 h-8 bg-white/95 backdrop-blur rounded-full text-slate-400 hover:text-red-500 flex items-center justify-center shadow-sm transition-colors">
-                                            <i class="far fa-heart"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="p-5">
-                                    <div class="text-xl font-black text-slate-900 mb-1">Rs. 1.2 L<span class="text-xs text-slate-400 font-medium">/mo</span></div>
-                                    <h3 class="text-base font-bold text-slate-800 mb-1 truncate"><a href="#" class="hover:text-primary transition-colors">Premium Office Space</a></h3>
-                                    <p class="text-slate-500 text-xs font-medium mb-4 truncate"><i class="fas fa-map-marker-alt text-accent mr-1"></i> Naxal, Kathmandu</p>
-                                    
-                                    <div class="flex items-center justify-between border-t border-slate-100 pt-3">
-                                        <div class="flex items-center gap-3 text-[11px] font-bold text-slate-600">
-                                            <span title="Rooms" class="flex items-center gap-1"><i class="fas fa-door-open text-primary/70"></i> 4</span>
-                                            <span title="Baths" class="flex items-center gap-1"><i class="fas fa-bath text-primary/70"></i> 2</span>
-                                            <span title="Area" class="flex items-center gap-1"><i class="fas fa-vector-square text-primary/70"></i> 2500 sqft</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 5 (Sale) -->
-                        <div class="swiper-slide property-card" data-category="sell" style="width: 320px;">
-                            <div class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-900/10 border border-slate-100 transition-all duration-300">
-                                <div class="relative h-56 overflow-hidden m-2 rounded-[1.5rem]">
-                                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Bungalow" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent"></div>
-                                    <div class="absolute top-3 left-3 flex gap-2">
-                                        <span class="px-3 py-1 bg-white/95 backdrop-blur rounded-full text-primary text-[10px] font-black tracking-wider uppercase shadow-sm">For Sale</span>
-                                    </div>
-                                    <div class="absolute top-3 right-3">
-                                        <button class="w-8 h-8 bg-white/95 backdrop-blur rounded-full text-slate-400 hover:text-red-500 flex items-center justify-center shadow-sm transition-colors">
-                                            <i class="far fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="absolute bottom-3 left-3">
-                                        <span class="px-2.5 py-1 bg-slate-900/80 backdrop-blur text-white text-[10px] font-bold rounded-full"><i class="fas fa-camera mr-1"></i> 12</span>
-                                    </div>
-                                </div>
-                                <div class="p-5">
-                                    <div class="text-xl font-black text-slate-900 mb-1">Rs. 8.5 Cr</div>
-                                    <h3 class="text-base font-bold text-slate-800 mb-1 truncate"><a href="#" class="hover:text-primary transition-colors">Classic Bungalow</a></h3>
-                                    <p class="text-slate-500 text-xs font-medium mb-4 truncate"><i class="fas fa-map-marker-alt text-accent mr-1"></i> Bhaisepati, Lalitpur</p>
-                                    
-                                    <div class="flex items-center justify-between border-t border-slate-100 pt-3">
-                                        <div class="flex items-center gap-3 text-[11px] font-bold text-slate-600">
-                                            <span title="Beds" class="flex items-center gap-1"><i class="fas fa-bed text-primary/70"></i> 6</span>
-                                            <span title="Baths" class="flex items-center gap-1"><i class="fas fa-bath text-primary/70"></i> 4</span>
-                                            <span title="Area" class="flex items-center gap-1"><i class="fas fa-vector-square text-primary/70"></i> 12 Aana</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 6 (Rent) -->
-                        <div class="swiper-slide property-card" data-category="rent" style="width: 320px;">
-                            <div class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-900/10 border border-slate-100 transition-all duration-300">
-                                <div class="relative h-56 overflow-hidden m-2 rounded-[1.5rem]">
-                                    <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Penthouse" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent"></div>
-                                    <div class="absolute top-3 left-3 flex gap-2">
-                                        <span class="px-3 py-1 bg-accent text-white backdrop-blur rounded-full text-[10px] font-black tracking-wider uppercase shadow-sm">Premium</span>
-                                        <span class="px-3 py-1 bg-white/95 backdrop-blur rounded-full text-accent text-[10px] font-black tracking-wider uppercase shadow-sm">For Rent</span>
-                                    </div>
-                                    <div class="absolute top-3 right-3">
-                                        <button class="w-8 h-8 bg-white/95 backdrop-blur rounded-full text-slate-400 hover:text-red-500 flex items-center justify-center shadow-sm transition-colors">
-                                            <i class="far fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div class="absolute bottom-3 left-3">
-                                        <span class="px-2.5 py-1 bg-slate-900/80 backdrop-blur text-white text-[10px] font-bold rounded-full"><i class="fas fa-camera mr-1"></i> 15</span>
-                                    </div>
-                                </div>
-                                <div class="p-5">
-                                    <div class="text-xl font-black text-slate-900 mb-1">Rs. 2.5 L<span class="text-xs text-slate-400 font-medium">/mo</span></div>
-                                    <h3 class="text-base font-bold text-slate-800 mb-1 truncate"><a href="#" class="hover:text-primary transition-colors">Skyline Penthouse</a></h3>
-                                    <p class="text-slate-500 text-xs font-medium mb-4 truncate"><i class="fas fa-map-marker-alt text-accent mr-1"></i> Sanepa, Lalitpur</p>
-                                    
-                                    <div class="flex items-center justify-between border-t border-slate-100 pt-3">
-                                        <div class="flex items-center gap-3 text-[11px] font-bold text-slate-600">
-                                            <span title="Beds" class="flex items-center gap-1"><i class="fas fa-bed text-primary/70"></i> 3</span>
-                                            <span title="Baths" class="flex items-center gap-1"><i class="fas fa-bath text-primary/70"></i> 4</span>
-                                            <span title="Area" class="flex items-center gap-1"><i class="fas fa-vector-square text-primary/70"></i> 3200 sqft</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                        @endif
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
 </section>

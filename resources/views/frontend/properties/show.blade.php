@@ -1,6 +1,24 @@
 @extends('frontend.layouts.master')
 
-@section('title', 'Property Details | Sapphire Investment')
+@section('title', $property->title . ' | Sapphire Investment')
+
+@push('meta')
+<meta name="description" content="{{ Str::limit(strip_tags($property->description), 160) }}">
+<meta property="og:title" content="{{ $property->title }}">
+<meta property="og:description" content="{{ Str::limit(strip_tags($property->description), 160) }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ route('frontend.properties.show', $property->slug) }}">
+@if($property->primaryImage)
+<meta property="og:image" content="{{ $property->primaryImage->url }}">
+@endif
+<meta property="og:site_name" content="Sapphire Investment">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ $property->title }}">
+<meta name="twitter:description" content="{{ Str::limit(strip_tags($property->description), 160) }}">
+@if($property->primaryImage)
+<meta name="twitter:image" content="{{ $property->primaryImage->url }}">
+@endif
+@endpush
 
 @push('styles')
 <style>
@@ -42,17 +60,33 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div>
                 <div class="inline-flex gap-2 mb-4">
-                    <span class="px-3 py-1 bg-white border border-slate-200 rounded-full text-slate-500 text-[10px] font-bold uppercase tracking-wider shadow-sm">For Sale</span>
-                    <span class="px-3 py-1 bg-accent text-white rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">Premium</span>
+                    @if($property->is_featured)
+                        <span class="px-3 py-1 bg-accent text-white rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">Featured</span>
+                    @endif
+                    <span class="px-3 py-1 bg-white border border-slate-200 rounded-full text-slate-500 text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                        {{ $property->businessType->name ?? 'For Sale' }}
+                    </span>
                 </div>
-                <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-2">Modern Classic Bungalow</h1>
+                <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-2">{{ $property->title }}</h1>
                 <p class="text-slate-500 font-medium flex items-center gap-2">
-                    <i class="fas fa-map-marker-alt text-primary"></i> Bhaisepati, Lalitpur, Nepal
+                    <i class="fas fa-map-marker-alt text-primary"></i> 
+                    {{ $property->municipality->name ?? 'Location Not Specified' }}
+                    @if($property->municipality && $property->municipality->district)
+                        , {{ $property->municipality->district->name }}
+                        @if($property->municipality->district->state)
+                            , {{ $property->municipality->district->state->name }}
+                        @endif
+                    @endif
                 </p>
             </div>
             <div class="text-left md:text-right">
                 <p class="text-sm text-slate-500 font-bold uppercase tracking-wider mb-1">Starting Price</p>
-                <div class="text-4xl font-black text-emerald-500">Rs. 8.5 <span class="text-2xl text-emerald-600/80">Cr</span></div>
+                <div class="text-4xl font-black text-emerald-500">
+                    Rs. {{ number_format($property->price) }}
+                    @if($property->price_period === 'monthly')
+                        <span class="text-2xl text-emerald-600/80">/mo</span>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
@@ -73,18 +107,17 @@
                     <!-- Main Image Slider -->
                     <div class="swiper gallery-swiper mb-4 shadow-xl">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide cursor-pointer" onclick="openLightbox(0)">
-                                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-cover" alt="Main View">
-                            </div>
-                            <div class="swiper-slide cursor-pointer" onclick="openLightbox(1)">
-                                <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-cover" alt="Living Room">
-                            </div>
-                            <div class="swiper-slide cursor-pointer" onclick="openLightbox(2)">
-                                <img src="https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-cover" alt="Kitchen">
-                            </div>
-                            <div class="swiper-slide cursor-pointer" onclick="openLightbox(3)">
-                                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-cover" alt="Bedroom">
-                            </div>
+                            @if($property->images->count() > 0)
+                                @foreach($property->images as $index => $image)
+                                    <div class="swiper-slide cursor-pointer" onclick="openLightbox({{ $index }})">
+                                        <img src="{{ $image->url }}" class="w-full h-full object-cover" alt="{{ $image->alt_text ?? $property->title }}">
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="swiper-slide cursor-pointer" onclick="openLightbox(0)">
+                                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-cover" alt="Property Image">
+                                </div>
+                            @endif
                         </div>
                         <div class="swiper-button-next !text-white !bg-slate-900/50 hover:!bg-primary rounded-full !w-12 !h-12 flex items-center justify-center transition-colors after:!text-sm backdrop-blur"></div>
                         <div class="swiper-button-prev !text-white !bg-slate-900/50 hover:!bg-primary rounded-full !w-12 !h-12 flex items-center justify-center transition-colors after:!text-sm backdrop-blur"></div>
@@ -93,31 +126,44 @@
                     <!-- Thumbnail Slider -->
                     <div class="swiper thumb-swiper">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover"></div>
-                            <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover"></div>
-                            <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover"></div>
-                            <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover"></div>
+                            @if($property->images->count() > 0)
+                                @foreach($property->images as $image)
+                                    <div class="swiper-slide">
+                                        <img src="{{ $image->url }}" class="w-full h-full object-cover" alt="{{ $image->alt_text ?? $property->title }}">
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="swiper-slide">
+                                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover" alt="Property Image">
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
 
                 <!-- Key Highlights Cards -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+                    @if($property->land_area_size)
+                        <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
+                            <i class="fas fa-vector-square text-2xl text-primary mb-2"></i>
+                            <div class="text-sm font-bold text-slate-800">{{ $property->land_area_size }} {{ $property->land_area_unit ?? 'sqft' }}</div>
+                        </div>
+                    @endif
+                    @if($property->propertyType)
+                        <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
+                            <i class="fas fa-home text-2xl text-primary mb-2"></i>
+                            <div class="text-sm font-bold text-slate-800">{{ $property->propertyType->name }}</div>
+                        </div>
+                    @endif
+                    @if($property->price_period === 'monthly')
+                        <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
+                            <i class="fas fa-calendar text-2xl text-primary mb-2"></i>
+                            <div class="text-sm font-bold text-slate-800">Monthly Rent</div>
+                        </div>
+                    @endif
                     <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
-                        <i class="fas fa-bed text-2xl text-primary mb-2"></i>
-                        <div class="text-sm font-bold text-slate-800">5 Bedrooms</div>
-                    </div>
-                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
-                        <i class="fas fa-bath text-2xl text-primary mb-2"></i>
-                        <div class="text-sm font-bold text-slate-800">4 Bathrooms</div>
-                    </div>
-                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
-                        <i class="fas fa-vector-square text-2xl text-primary mb-2"></i>
-                        <div class="text-sm font-bold text-slate-800">12 Aana Area</div>
-                    </div>
-                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
-                        <i class="fas fa-car text-2xl text-primary mb-2"></i>
-                        <div class="text-sm font-bold text-slate-800">3 Parking Slots</div>
+                        <i class="fas fa-images text-2xl text-primary mb-2"></i>
+                        <div class="text-sm font-bold text-slate-800">{{ $property->images->count() }} Images</div>
                     </div>
                 </div>
 
@@ -125,15 +171,17 @@
                 <div class="mb-12">
                     <h3 class="text-2xl font-black text-slate-900 mb-6 border-b border-slate-100 pb-4">Property Overview</h3>
                     <div class="prose prose-slate max-w-none text-slate-600 font-medium leading-relaxed">
-                        <p>
-                            Experience unparalleled luxury in this modern classic bungalow situated in the highly sought-after neighborhood of Bhaisepati, Lalitpur. This exquisite property spans across a generous 12 Aana plot and offers a perfect blend of contemporary design and timeless elegance.
-                        </p>
-                        <p>
-                            The ground floor welcomes you with a grand foyer leading to a spacious, light-filled living area with large floor-to-ceiling windows. The ultra-modern, fully equipped modular kitchen with a contiguous dining area makes it ideal for entertaining guests. 
-                        </p>
-                        <p>
-                            The upper levels host 5 luxuriously appointed bedrooms, including a master suite complete with a walk-in closet, enormous en-suite bathroom, and a private balcony offering stunning panoramic views of the Kathmandu valley and surrounding hills.
-                        </p>
+                        @if($property->description)
+                            {!! $property->description !!}
+                        @else
+                            <p>This beautiful property is located in {{ $property->municipality->name ?? 'a prime location' }}. 
+                            {{ $property->businessType->name ?? 'Available' }} at an attractive price of Rs. {{ number_format($property->price) }}
+                            @if($property->price_period === 'monthly')
+                                per month
+                            @endif
+                            .</p>
+                            <p>Contact us for more details about this property or to schedule a visit.</p>
+                        @endif
                     </div>
                 </div>
 
@@ -141,12 +189,29 @@
                 <div class="mb-12">
                     <h3 class="text-2xl font-black text-slate-900 mb-6 border-b border-slate-100 pb-4">Features & Amenities</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
-                        <div class="flex items-center gap-3 bg-slate-50 rounded-lg p-3 border border-slate-100"><i class="fas fa-check-circle text-accent"></i> <span class="text-slate-700 font-medium text-sm">Modular Kitchen setup</span></div>
-                        <div class="flex items-center gap-3 bg-slate-50 rounded-lg p-3 border border-slate-100"><i class="fas fa-check-circle text-accent"></i> <span class="text-slate-700 font-medium text-sm">Servant Quarters</span></div>
-                        <div class="flex items-center gap-3 bg-slate-50 rounded-lg p-3 border border-slate-100"><i class="fas fa-check-circle text-accent"></i> <span class="text-slate-700 font-medium text-sm">Backup Generator / Solar Install</span></div>
-                        <div class="flex items-center gap-3 bg-slate-50 rounded-lg p-3 border border-slate-100"><i class="fas fa-check-circle text-accent"></i> <span class="text-slate-700 font-medium text-sm">24/7 Security System Configured</span></div>
-                        <div class="flex items-center gap-3 bg-slate-50 rounded-lg p-3 border border-slate-100"><i class="fas fa-check-circle text-accent"></i> <span class="text-slate-700 font-medium text-sm">Landscaped Garden with Gazebo</span></div>
-                        <div class="flex items-center gap-3 bg-slate-50 rounded-lg p-3 border border-slate-100"><i class="fas fa-check-circle text-accent"></i> <span class="text-slate-700 font-medium text-sm">Pitched 20ft Road Access</span></div>
+                        @if($property->features->count() > 0)
+                            @foreach($property->features as $feature)
+                                <div class="flex items-center gap-3 bg-slate-50 rounded-lg p-3 border border-slate-100">
+                                    <i class="fas fa-check-circle text-accent"></i> 
+                                    <span class="text-slate-700 font-medium text-sm">{{ $feature->title }}</span>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="flex items-center gap-3 bg-slate-50 rounded-lg p-3 border border-slate-100">
+                                <i class="fas fa-check-circle text-accent"></i> 
+                                <span class="text-slate-700 font-medium text-sm">Prime Location</span>
+                            </div>
+                            <div class="flex items-center gap-3 bg-slate-50 rounded-lg p-3 border border-slate-100">
+                                <i class="fas fa-check-circle text-accent"></i> 
+                                <span class="text-slate-700 font-medium text-sm">Available {{ $property->businessType->name ?? 'For Sale' }}</span>
+                            </div>
+                            @if($property->land_area_size)
+                                <div class="flex items-center gap-3 bg-slate-50 rounded-lg p-3 border border-slate-100">
+                                    <i class="fas fa-check-circle text-accent"></i> 
+                                    <span class="text-slate-700 font-medium text-sm">{{ $property->land_area_size }} {{ $property->land_area_unit ?? 'sqft' }} Area</span>
+                                </div>
+                            @endif
+                        @endif
                     </div>
                 </div>
 
@@ -175,7 +240,12 @@
                             </div>
                             <div class="text-right">
                                 <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Price</span>
-                                <span class="font-black text-2xl text-slate-900">Rs. 8.5 Cr</span>
+                                <span class="font-black text-2xl text-slate-900">
+                                    Rs. {{ number_format($property->price) }}
+                                    @if($property->price_period === 'monthly')
+                                        <span class="text-sm text-slate-500">/mo</span>
+                                    @endif
+                                </span>
                             </div>
                         </div>
 
@@ -271,7 +341,64 @@
     </div>
 </section>
 
-<!-- Related Properties section could go here -->
+<!-- ==========================================
+     RELATED PROPERTIES
+     ========================================== -->
+@if($relatedProperties->count() > 0)
+<section class="py-16 bg-slate-50">
+    <div class="container mx-auto px-4 md:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4">Related Properties</h2>
+            <p class="text-slate-600 font-medium">Explore similar properties in the area</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @foreach($relatedProperties as $relatedProperty)
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-900/10 border border-slate-100 transition-all duration-300">
+                    <div class="relative h-56 overflow-hidden">
+                        @if($relatedProperty->primaryImage)
+                            <img src="{{ $relatedProperty->primaryImage->url }}" alt="{{ $relatedProperty->primaryImage->alt_text ?? $relatedProperty->title }}" 
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        @else
+                            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                                 alt="{{ $relatedProperty->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        @endif
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent"></div>
+                        <div class="absolute top-3 left-3">
+                            <span class="px-3 py-1 bg-white/95 backdrop-blur rounded-full text-primary text-[10px] font-black tracking-wider uppercase shadow-sm">
+                                {{ $relatedProperty->businessType->name ?? 'For Sale' }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="text-xl font-black text-slate-900 mb-1">
+                            Rs. {{ number_format($relatedProperty->price) }}
+                            @if($relatedProperty->price_period === 'monthly')
+                                <span class="text-sm text-slate-500">/mo</span>
+                            @endif
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800 mb-2">
+                            <a href="{{ route('frontend.properties.show', $relatedProperty->slug) }}" class="hover:text-primary transition-colors">
+                                {{ $relatedProperty->title }}
+                            </a>
+                        </h3>
+                        <p class="text-slate-500 text-xs font-medium mb-4">
+                            <i class="fas fa-map-marker-alt text-accent mr-1"></i> 
+                            {{ $relatedProperty->municipality->name ?? 'Location Not Specified' }}
+                        </p>
+                        @if($relatedProperty->land_area_size)
+                            <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600">
+                                <i class="fas fa-vector-square text-primary/70"></i> 
+                                {{ $relatedProperty->land_area_size }} {{ $relatedProperty->land_area_unit ?? 'sqft' }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
 
 @endsection
 
@@ -304,7 +431,15 @@
         });
 
         // Initialize Map
-        const map = L.map('propertyMap', { zoomControl: false }).setView([27.6441, 85.3090], 14);
+        @if($property->latitude && $property->longitude)
+            const map = L.map('propertyMap', { zoomControl: false }).setView([{{ $property->latitude }}, {{ $property->longitude }}], 14);
+            const markerCoords = [{{ $property->latitude }}, {{ $property->longitude }}];
+        @else
+            // Default coordinates if not set
+            const map = L.map('propertyMap', { zoomControl: false }).setView([27.6441, 85.3090], 14);
+            const markerCoords = [27.6441, 85.3090];
+        @endif
+        
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -319,8 +454,8 @@
             iconAnchor: [20, 20]
         });
 
-        L.marker([27.6441, 85.3090], {icon: customIcon}).addTo(map)
-            .bindPopup('<b class="font-bold text-slate-900">Modern Classic Bungalow</b><br><span class="text-slate-500 text-xs text-medium">Bhaisepati, Lalitpur</span>')
+        L.marker(markerCoords, {icon: customIcon}).addTo(map)
+            .bindPopup('<b class="font-bold text-slate-900">{{ $property->title }}</b><br><span class="text-slate-500 text-xs text-medium">{{ $property->municipality->name ?? 'Location Not Specified' }}</span>')
             .openPopup();
             
         // ----- Schedule Visit Form Logic -----

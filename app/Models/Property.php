@@ -59,6 +59,12 @@ class Property extends Model
                 $property->slug = Str::slug($property->title);
             }
         });
+
+        static::updating(function ($property) {
+            if ($property->isDirty('title') && empty($property->slug)) {
+                $property->slug = Str::slug($property->title);
+            }
+        });
     }
 
     /**
