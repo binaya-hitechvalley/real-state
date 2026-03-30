@@ -38,4 +38,7 @@ Route::prefix('admin')->group(function () {
     
     // Property Features Management
     Route::resource('property-features', PropertyFeatureController::class)->names('admin.property-features');
+    Route::post('property-features/bulk-delete', [PropertyFeatureController::class, 'bulkDelete'])->name('admin.property-features.bulk-delete');
+    Route::post('property-features/bulk-update', [PropertyFeatureController::class, 'bulkUpdate'])->name('admin.property-features.bulk-update');
+    Route::get('property-features/{id}/details', [PropertyFeatureController::class, 'getFeatureDetails'])->name('admin.property-features.details');
 });
