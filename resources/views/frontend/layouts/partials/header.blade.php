@@ -1,5 +1,5 @@
 @php
-    $generalSettings = \App\Models\SiteSetting::getGroup('general');
+    $generalSettings = $generalSettings ?? [];
     $siteName = $generalSettings['site_name'] ?? config('app.name', 'Sapphire Investment');
     $siteLogo = $generalSettings['site_logo'] ?? null;
     $nameParts = explode(' ', $siteName, 2);

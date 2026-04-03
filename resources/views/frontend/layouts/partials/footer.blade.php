@@ -1,5 +1,6 @@
 @php
-    $generalSettings = \App\Models\SiteSetting::getGroup('general');
+    $generalSettings = $generalSettings ?? [];
+    $contactSettings = $contactSettings ?? [];
     $siteName = $generalSettings['site_name'] ?? config('app.name', 'Sapphire Investment');
     $siteLogo = $generalSettings['site_logo'] ?? null;
 @endphp
@@ -29,9 +30,18 @@
                     Empowering real estate investments with precision, insight, and strategy. We help you secure properties with unmatched potential and verified authenticity across Nepal.
                 </p>
                 <div class="flex gap-3 pt-4">
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 hover:bg-primary hover:text-white hover:-translate-y-1 transition-all"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 hover:bg-primary hover:text-white hover:-translate-y-1 transition-all"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 hover:bg-primary hover:text-white hover:-translate-y-1 transition-all"><i class="fab fa-linkedin-in"></i></a>
+                    @if(isset($contactSettings['social_facebook']) && $contactSettings['social_facebook'])
+                    <a href="{{ $contactSettings['social_facebook'] }}" target="_blank" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 hover:bg-primary hover:text-white hover:-translate-y-1 transition-all"><i class="fab fa-facebook-f"></i></a>
+                    @endif
+                    @if(isset($contactSettings['social_instagram']) && $contactSettings['social_instagram'])
+                    <a href="{{ $contactSettings['social_instagram'] }}" target="_blank" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 hover:bg-primary hover:text-white hover:-translate-y-1 transition-all"><i class="fab fa-instagram"></i></a>
+                    @endif
+                    @if(isset($contactSettings['social_linkedin']) && $contactSettings['social_linkedin'])
+                    <a href="{{ $contactSettings['social_linkedin'] }}" target="_blank" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 hover:bg-primary hover:text-white hover:-translate-y-1 transition-all"><i class="fab fa-linkedin-in"></i></a>
+                    @endif
+                    @if(isset($contactSettings['social_twitter']) && $contactSettings['social_twitter'])
+                    <a href="{{ $contactSettings['social_twitter'] }}" target="_blank" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 hover:bg-primary hover:text-white hover:-translate-y-1 transition-all"><i class="fab fa-x-twitter"></i></a>
+                    @endif
                 </div>
             </div>
 
@@ -65,15 +75,25 @@
                         <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-accent shrink-0"><i class="fas fa-map-marker-alt"></i></div>
                         <div>
                             <p class="text-slate-300 font-bold text-sm">Head Office</p>
-                            <p class="text-slate-500 text-xs mt-1">Kamaladi-28, Kathmandu, Nepal</p>
+                            <p class="text-slate-500 text-xs mt-1">{{ $contactSettings['contact_address'] ?? 'Kamaladi-28, Kathmandu, Nepal' }}</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-4">
                         <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-accent shrink-0"><i class="fas fa-phone"></i></div>
                         <div>
                             <p class="text-slate-300 font-bold text-sm">Direct Line</p>
-                            <p class="text-slate-500 text-xs mt-1">+977 9851056272</p>
+                            <p class="text-slate-500 text-xs mt-1">{{ $contactSettings['contact_phone'] ?? '+977 9851056272' }}</p>
                         </div>
+                    </div>
+                    @if(isset($contactSettings['contact_email']) && $contactSettings['contact_email'])
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-accent shrink-0"><i class="fas fa-envelope"></i></div>
+                        <div>
+                            <p class="text-slate-300 font-bold text-sm">Email Address</p>
+                            <p class="text-slate-500 text-xs mt-1">{{ $contactSettings['contact_email'] }}</p>
+                        </div>
+                    </div>
+                    @endif
                     </div>
                 </div>
             </div>

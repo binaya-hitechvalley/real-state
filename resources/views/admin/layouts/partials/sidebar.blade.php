@@ -5,7 +5,7 @@
             <div class="bg-blue-500 w-8 h-8 rounded-lg flex items-center justify-center">
                 <i class="fas fa-chart-line text-white"></i>
             </div>
-            <h1 class="text-xl font-bold text-gray-800 ml-3 sidebar-text">{{ config('app.name', 'AdminPanel') }}</h1>
+            <h1 class="text-xl font-bold text-gray-800 ml-3 sidebar-text">{{ str_replace('"', '', $generalSettings['site_name'] ?? config('app.name', 'AdminPanel')) }}</h1>
         </div>
         <!-- Hide this toggle on mobile, only show on desktop -->
         <button id="sidebarToggle" class="text-gray-500 hidden md:block">

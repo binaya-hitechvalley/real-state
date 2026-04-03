@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @php
-        $generalSettings = \App\Models\SiteSetting::getGroup('general');
+        $generalSettings = $generalSettings ?? [];
         $siteTitle = $generalSettings['site_title'] ?? config('app.name', 'Sapphire Investment');
         $siteFavicon = $generalSettings['site_favicon'] ?? null;
     @endphp
