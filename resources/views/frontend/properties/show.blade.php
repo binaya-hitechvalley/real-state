@@ -253,7 +253,19 @@
                         </div>
 
                         <!-- Integrated Contact/Booking Form -->
-                        <form action="/bookings/success" method="GET" class="space-y-4">
+                        @if(session('success'))
+                            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-4 text-sm font-medium flex items-center gap-2">
+                                <i class="fas fa-check-circle"></i> {{ session('success') }}
+                            </div>
+                        @endif
+                        @if($errors->any())
+                            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4 text-sm font-medium flex items-center gap-2">
+                                <i class="fas fa-exclamation-circle"></i> Please check the form fields.
+                            </div>
+                        @endif
+
+                        <form action="{{ route('frontend.properties.inquire', $property->slug) }}" method="POST" class="space-y-4">
+                            @csrf
                             <div>
                                 <h3 class="font-bold text-slate-900 text-lg mb-4">Request Details</h3>
                             </div>
@@ -261,17 +273,20 @@
                             <!-- Personal Details -->
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Full Name *</label>
-                                <input type="text" name="name" placeholder="John Doe" class="form-input" required>
+                                <input type="text" name="name" value="{{ old('name') }}" placeholder="John Doe" class="form-input @error('name') border-red-500 @enderror" required>
+                                @error('name') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
                             </div>
                             
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Email</label>
-                                    <input type="email" name="email" placeholder="john@email.com" class="form-input">
+                                    <input type="email" name="email" value="{{ old('email') }}" placeholder="john@email.com" class="form-input @error('email') border-red-500 @enderror">
+                                    @error('email') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Phone *</label>
-                                    <input type="tel" name="phone" placeholder="+977 98..." class="form-input" required>
+                                    <input type="tel" name="phone" value="{{ old('phone') }}" placeholder="+977 98..." class="form-input @error('phone') border-red-500 @enderror" required>
+                                    @error('phone') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             

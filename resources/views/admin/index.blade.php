@@ -133,7 +133,7 @@
                 <a href="{{ route('admin.properties.edit', $property) }}" class="flex flex-col border border-gray-100 rounded-xl overflow-hidden hover:shadow-md transition-shadow group">
                     <div class="h-32 bg-gray-200 relative overflow-hidden">
                         @if($property->images && $property->images->count() > 0)
-                            <img src="{{ asset('storage/' . $property->images->first()->image_path) }}" alt="{{ $property->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <img src="{{ $property->images->first()->url }}" alt="{{ $property->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                         @else
                             <div class="w-full h-full flex items-center justify-center text-gray-400">
                                 <i class="fas fa-image text-3xl"></i>

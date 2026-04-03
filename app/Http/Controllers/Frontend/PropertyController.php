@@ -9,6 +9,7 @@ use App\Models\BusinessType;
 use App\Models\Municipality;
 use App\Models\State;
 use App\Models\District;
+use App\Models\ContactMessage;
 use Illuminate\Http\Request;
 
 class PropertyController extends Controller
@@ -176,5 +177,38 @@ class PropertyController extends Controller
             ->get();
 
         return view('frontend.properties.show', compact('property', 'relatedProperties'));
+    }
+
+    /**
+     * Handle property inquiries and site visit scheduling.
+     */
+    public function inquire(Request $request, Property $property)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'required|string|max:20',
+            'visit_date' => 'nullable|date',
+            'visit_time' => 'nullable|string',
+        ]);
+
+        $subject = 'Inquiry for Property: ' . $property->title;
+        $messageContent = "Property: {$property->title}\nProperty Link: " . route('frontend.properties.show', $property->slug) . "\n\n";
+        
+        if ($request->filled('visit_date') && $request->filled('visit_time')) {
+            $subject = 'Site Visit Request: ' . $property->title;
+            $messageContent .= "Requested Site Visit:\nDate: {$request->visit_date}\nTime: {$request->visit_time}\n";
+        }
+
+        ContactMessage::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'subject' => $subject,
+            'message' => $messageContent,
+            'is_read' => false,
+        ]);
+
+        return redirect()->back()->with('success', 'Your request has been sent successfully. Our team will contact you shortly.');
     }
 }

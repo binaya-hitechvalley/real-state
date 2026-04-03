@@ -11,6 +11,7 @@ Route::get('/', [HomeController::class, 'index']);
 // Properties routes
 Route::get('/properties', [PropertyController::class, 'index'])->name('frontend.properties.index');
 Route::get('/properties/{slug}', [PropertyController::class, 'show'])->name('frontend.properties.show');
+Route::post('/properties/{property:slug}/inquire', [PropertyController::class, 'inquire'])->name('frontend.properties.inquire');
 
 // Location API routes for frontend
 Route::get('/api/districts/{state}', [PropertyController::class, 'getDistricts'])->name('frontend.api.districts');
