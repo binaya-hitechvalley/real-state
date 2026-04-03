@@ -49,6 +49,9 @@ class PropertyRequest extends FormRequest
             
             'status' => ['required', Rule::in(['available', 'sold', 'rented', 'inactive'])],
             'is_featured' => ['boolean'],
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:500'],
+            'meta_keywords' => ['nullable', 'string', 'max:255'],
             
             // Images
             'images' => ['nullable', 'array', 'max:10'],

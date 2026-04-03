@@ -2,6 +2,20 @@
 
 @section('title', ($blog->meta_title ?? $blog->title) . ' | Blog')
 
+@section('meta_tags')
+    <meta name="description" content="{{ $blog->meta_description ?? \Illuminate\Support\Str::limit(strip_tags($blog->content), 160) }}">
+    @if($blog->meta_keywords)
+        <meta name="keywords" content="{{ $blog->meta_keywords }}">
+    @endif
+    <!-- Open Graph for Social Media -->
+    <meta property="og:title" content="{{ $blog->meta_title ?? $blog->title }}">
+    <meta property="og:description" content="{{ $blog->meta_description ?? \Illuminate\Support\Str::limit(strip_tags($blog->content), 160) }}">
+    <meta property="og:url" content="{{ request()->url() }}">
+    @if($blog->display_image)
+        <meta property="og:image" content="{{ url($blog->display_image) }}">
+    @endif
+@endsection
+
 @push('styles')
 <style>
     /* Blog Content Prose Styles */
@@ -50,7 +64,7 @@
 <!-- Hero Banner -->
 <section class="pt-28 pb-12 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 relative overflow-hidden">
     <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNTQuNjI3IDI1LjVjMCAxNi4wMTYtMTIuOTg0IDI5LTI5IDI5cy0yOS0xMi45ODQtMjktMjkgMTIuOTg0LTI5IDI5LTI5IDI5IDEyLjk4NCAyOSAyOVoiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIuMDMiLz48L3N2Zz4=')] opacity-60"></div>
-    <div class="container mx-auto px-4 md:px-8 max-w-6xl relative z-10">
+    <div class="container mx-auto px-4 md:px-8 max-w-7xl relative z-10">
         <!-- Breadcrumb -->
         <nav class="flex items-center gap-2 text-sm mb-8">
             <a href="/" class="text-slate-400 hover:text-white transition-colors"><i class="fas fa-home"></i></a>
@@ -66,9 +80,9 @@
             <!-- Category & Date -->
             <div class="flex flex-wrap items-center gap-3 mb-6">
                 @if($blog->category)
-                    <span class="px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-wider border border-blue-500/30">
+                    <a href="{{ route('frontend.blogs.index', ['category' => $blog->category]) }}" class="px-4 py-1.5 rounded-full bg-blue-500/20 hover:bg-blue-500/40 text-blue-300 text-xs font-bold uppercase tracking-wider border border-blue-500/30 transition-colors">
                         {{ $blog->category }}
-                    </span>
+                    </a>
                 @endif
                 @if($blog->published_at)
                     <span class="text-slate-400 text-sm font-medium flex items-center gap-2">
@@ -95,7 +109,7 @@
 
 <!-- Main Content -->
 <section class="py-12 bg-gray-50">
-    <div class="container mx-auto px-4 md:px-8 max-w-6xl">
+    <div class="container mx-auto px-4 md:px-8 max-w-7xl">
         <div class="flex flex-col lg:flex-row gap-10">
 
             <!-- Article Content -->
@@ -121,9 +135,9 @@
                         <div class="flex flex-wrap items-center gap-2 pt-6 border-t border-gray-100">
                             <span class="text-sm font-semibold text-slate-500 mr-2"><i class="fas fa-tags mr-1"></i>Tags:</span>
                             @foreach(array_map('trim', explode(',', $blog->meta_keywords)) as $tag)
-                                <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-full hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                                <a href="{{ route('frontend.blogs.index', ['tag' => $tag]) }}" class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-full hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
                                     {{ $tag }}
-                                </span>
+                                </a>
                             @endforeach
                         </div>
                     </div>
@@ -194,22 +208,22 @@
                 <!-- Search -->
                 <div class="sidebar-card">
                     <h3>Search</h3>
-                    <div class="relative">
-                        <input type="text" placeholder="Search articles..." class="w-full px-4 py-3 pr-12 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" id="blogSearch" onkeypress="if(event.key==='Enter') alert('Search coming soon!')">
-                        <button class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors">
+                    <form action="{{ route('frontend.blogs.index') }}" method="GET" class="relative">
+                        <input type="text" name="search" placeholder="Search articles..." value="{{ request('search') }}" class="w-full px-4 py-3 pr-12 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" id="blogSearch">
+                        <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors">
                             <i class="fas fa-search"></i>
                         </button>
-                    </div>
+                    </form>
                 </div>
 
                 <!-- Categories -->
-                @if($categories->isNotEmpty())
+                @if(isset($categories) && count($categories) > 0)
                 <div class="sidebar-card">
                     <h3>Categories</h3>
                     <ul class="space-y-1">
                         @foreach($categories as $cat)
                         <li>
-                            <a href="/" class="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-blue-50 text-slate-600 hover:text-blue-600 transition-all group">
+                            <a href="{{ route('frontend.blogs.index', ['category' => $cat->category]) }}" class="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-blue-50 text-slate-600 hover:text-blue-600 transition-all group">
                                 <span class="flex items-center gap-3">
                                     <i class="fas fa-folder text-slate-300 group-hover:text-blue-400 text-sm transition-colors"></i>
                                     <span class="font-medium text-sm">{{ $cat->category }}</span>
@@ -223,7 +237,7 @@
                 @endif
 
                 <!-- Recent Posts -->
-                @if($recentPosts->isNotEmpty())
+                @if(isset($recentPosts) && count($recentPosts) > 0)
                 <div class="sidebar-card">
                     <h3>Recent Posts</h3>
                     <div class="space-y-4">
@@ -256,9 +270,9 @@
                     <h3>Popular Tags</h3>
                     <div class="flex flex-wrap gap-2">
                         @foreach($allTags as $tag)
-                            <span class="px-3 py-1.5 bg-gray-50 border border-gray-200 text-slate-600 text-xs font-medium rounded-full hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition-all cursor-pointer">
+                            <a href="{{ route('frontend.blogs.index', ['tag' => $tag]) }}" class="px-3 py-1.5 bg-gray-50 border border-gray-200 text-slate-600 text-xs font-medium rounded-full hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition-all cursor-pointer">
                                 {{ $tag }}
-                            </span>
+                            </a>
                         @endforeach
                     </div>
                 </div>

@@ -1,3 +1,9 @@
+@php
+    $generalSettings = \App\Models\SiteSetting::getGroup('general');
+    $siteName = $generalSettings['site_name'] ?? config('app.name', 'Sapphire Investment');
+    $siteLogo = $generalSettings['site_logo'] ?? null;
+@endphp
+
 <!-- Footer Partial -->
 <footer class="bg-slate-950 pt-20 pb-10 border-t border-white/5 relative overflow-hidden">
     <!-- Glow Effect -->
@@ -10,10 +16,14 @@
             <!-- Branding -->
             <div class="lg:col-span-4 space-y-6">
                 <a href="/" class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-900/40">
-                        S
-                    </div>
-                    <span class="text-2xl font-black text-white tracking-tight">Sapphire</span>
+                    @if($siteLogo)
+                        <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ $siteName }}" class="h-10 object-contain">
+                    @else
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-900/40">
+                            {{ substr($siteName, 0, 1) }}
+                        </div>
+                    @endif
+                    <span class="text-2xl font-black text-white tracking-tight">{{ $siteName }}</span>
                 </a>
                 <p class="text-slate-400 text-sm leading-relaxed max-w-sm">
                     Empowering real estate investments with precision, insight, and strategy. We help you secure properties with unmatched potential and verified authenticity across Nepal.
@@ -29,10 +39,10 @@
             <div class="lg:col-span-2">
                 <h4 class="text-white font-bold mb-6 tracking-wide">Company</h4>
                 <ul class="space-y-4 text-sm font-medium">
-                    <li><a href="#" class="text-slate-400 hover:text-accent transition-colors flex items-center gap-2 group"><span class="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-accent transition-colors"></span> About Us</a></li>
-                    <li><a href="#" class="text-slate-400 hover:text-accent transition-colors flex items-center gap-2 group"><span class="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-accent transition-colors"></span> Projects</a></li>
-                    <li><a href="#" class="text-slate-400 hover:text-accent transition-colors flex items-center gap-2 group"><span class="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-accent transition-colors"></span> Insights & Blog</a></li>
-                    <li><a href="#" class="text-slate-400 hover:text-accent transition-colors flex items-center gap-2 group"><span class="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-accent transition-colors"></span> Contact</a></li>
+                    <li><a href="{{ route('frontend.about') }}" class="text-slate-400 hover:text-accent transition-colors flex items-center gap-2 group"><span class="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-accent transition-colors"></span> About Us</a></li>
+                    <li><a href="{{ route('frontend.properties.index') }}" class="text-slate-400 hover:text-accent transition-colors flex items-center gap-2 group"><span class="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-accent transition-colors"></span> Properties</a></li>
+                    <li><a href="{{ route('frontend.blogs.index') }}" class="text-slate-400 hover:text-accent transition-colors flex items-center gap-2 group"><span class="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-accent transition-colors"></span> Insights & Blog</a></li>
+                    <li><a href="{{ route('frontend.contact') }}" class="text-slate-400 hover:text-accent transition-colors flex items-center gap-2 group"><span class="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-accent transition-colors"></span> Contact</a></li>
                 </ul>
             </div>
 
@@ -72,7 +82,7 @@
 
         <div class="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-white/10 gap-4">
             <p class="text-slate-500 text-xs font-medium">
-                &copy; {{ date('Y') }} Sapphire Investment Pvt. Ltd. All rights reserved.
+                &copy; {{ date('Y') }} {{ $siteName }}. All rights reserved.
             </p>
             <div class="flex gap-6 text-xs font-medium text-slate-500">
                 <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>

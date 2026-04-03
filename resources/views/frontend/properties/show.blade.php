@@ -1,11 +1,14 @@
 @extends('frontend.layouts.master')
 
-@section('title', $property->title . ' | Sapphire Investment')
+@section('title', ($property->meta_title ?? $property->title) . ' | Sapphire Investment')
 
-@push('meta')
-<meta name="description" content="{{ Str::limit(strip_tags($property->description), 160) }}">
-<meta property="og:title" content="{{ $property->title }}">
-<meta property="og:description" content="{{ Str::limit(strip_tags($property->description), 160) }}">
+@section('meta_tags')
+<meta name="description" content="{{ $property->meta_description ?? Str::limit(strip_tags($property->description), 160) }}">
+@if($property->meta_keywords)
+<meta name="keywords" content="{{ $property->meta_keywords }}">
+@endif
+<meta property="og:title" content="{{ $property->meta_title ?? $property->title }}">
+<meta property="og:description" content="{{ $property->meta_description ?? Str::limit(strip_tags($property->description), 160) }}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{{ route('frontend.properties.show', $property->slug) }}">
 @if($property->primaryImage)
@@ -13,12 +16,12 @@
 @endif
 <meta property="og:site_name" content="Sapphire Investment">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="{{ $property->title }}">
-<meta name="twitter:description" content="{{ Str::limit(strip_tags($property->description), 160) }}">
+<meta name="twitter:title" content="{{ $property->meta_title ?? $property->title }}">
+<meta name="twitter:description" content="{{ $property->meta_description ?? Str::limit(strip_tags($property->description), 160) }}">
 @if($property->primaryImage)
 <meta name="twitter:image" content="{{ $property->primaryImage->url }}">
 @endif
-@endpush
+@endsection
 
 @push('styles')
 <style>

@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\PropertyFeatureController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\SiteSettingController;
+use App\Http\Controllers\Admin\ContactMessageController;
 
 // Admin routes will be defined here
 // Example:
@@ -53,4 +55,17 @@ Route::prefix('admin')->group(function () {
     
     // FAQs Management
     Route::resource('faqs', FaqController::class)->names('admin.faqs');
+
+    // Site Settings (General, About & Contact page content)
+    Route::get('settings/general', [SiteSettingController::class, 'generalPage'])->name('admin.settings.general');
+    Route::put('settings/general', [SiteSettingController::class, 'updateGeneralPage'])->name('admin.settings.general.update');
+    Route::get('settings/about', [SiteSettingController::class, 'aboutPage'])->name('admin.settings.about');
+    Route::put('settings/about', [SiteSettingController::class, 'updateAboutPage'])->name('admin.settings.about.update');
+    Route::get('settings/contact', [SiteSettingController::class, 'contactPage'])->name('admin.settings.contact');
+    Route::put('settings/contact', [SiteSettingController::class, 'updateContactPage'])->name('admin.settings.contact.update');
+
+    // Contact Messages
+    Route::get('contact-messages', [ContactMessageController::class, 'index'])->name('admin.contact-messages.index');
+    Route::get('contact-messages/{contactMessage}', [ContactMessageController::class, 'show'])->name('admin.contact-messages.show');
+    Route::delete('contact-messages/{contactMessage}', [ContactMessageController::class, 'destroy'])->name('admin.contact-messages.destroy');
 });

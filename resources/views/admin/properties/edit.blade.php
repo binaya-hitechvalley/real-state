@@ -325,6 +325,44 @@
                     @enderror
                 </div>
                 @endif
+                
+                <!-- SEO Section -->
+                <div class="md:col-span-2 pt-6 border-t border-gray-200 mt-2">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4"><i class="fas fa-search text-green-500 mr-2"></i>SEO Settings</h3>
+                    
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label for="meta_title" class="block text-sm font-medium text-gray-700 mb-2">Meta Title</label>
+                            <input type="text" id="meta_title" name="meta_title" value="{{ old('meta_title', $property->meta_title) }}"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('meta_title') border-red-500 @enderror"
+                                placeholder="SEO Title (Leave blank to use property title)">
+                            @error('meta_title')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="meta_description" class="block text-sm font-medium text-gray-700 mb-2">Meta Description</label>
+                            <textarea id="meta_description" name="meta_description" rows="3"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('meta_description') border-red-500 @enderror"
+                                placeholder="Compelling description for search engines (Max 500 characters)">{{ old('meta_description', $property->meta_description) }}</textarea>
+                            @error('meta_description')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="meta_keywords" class="block text-sm font-medium text-gray-700 mb-2">Meta Keywords (Comma separated)</label>
+                            <input type="text" id="meta_keywords" name="meta_keywords" value="{{ old('meta_keywords', $property->meta_keywords) }}"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('meta_keywords') border-red-500 @enderror"
+                                placeholder="e.g. apartment, kathmandu, luxury, 3bhk">
+                            @error('meta_keywords')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Is Featured -->
                 <div class="md:col-span-2">
                     <label class="flex items-center cursor-pointer">
@@ -355,41 +393,45 @@
 @endsection
 
 @push('scripts')
+<style>
+/* Fix CKEditor Tailwind Reset Issues */
+.ck-editor__editable_inline {
+    min-height: 400px;
+}
+.ck-content h1 { font-size: 2em; font-weight: bold; margin-top: 0.67em; margin-bottom: 0.67em; }
+.ck-content h2 { font-size: 1.5em; font-weight: bold; margin-top: 0.83em; margin-bottom: 0.83em; }
+.ck-content h3 { font-size: 1.17em; font-weight: bold; margin-top: 1em; margin-bottom: 1em; }
+.ck-content h4 { font-size: 1em; font-weight: bold; margin-top: 1.33em; margin-bottom: 1.33em; }
+.ck-content h5 { font-size: 0.83em; font-weight: bold; margin-top: 1.67em; margin-bottom: 1.67em; }
+.ck-content h6 { font-size: 0.67em; font-weight: bold; margin-top: 2.33em; margin-bottom: 2.33em; }
+.ck-content ul { list-style-type: decimal; padding-left: 40px; margin-top: 1em; margin-bottom: 1em; }
+.ck-content ul { list-style-type: disc; }
+.ck-content ol { list-style-type: decimal; padding-left: 40px; margin-top: 1em; margin-bottom: 1em; }
+.ck-content p { margin-top: 1em; margin-bottom: 1em; }
+.ck-content a { color: #2563eb; text-decoration: underline; }
+</style>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script>
 $(document).ready(function() {
-    // Initialize Summernote editor
-    $('#description').summernote({
-        height: 400,
-        minHeight: 300,
-        maxHeight: 600,
-        focus: true,
-        placeholder: 'Enter detailed property description with rich formatting...',
-        toolbar: [
-            ['style', ['style', 'bold', 'italic', 'underline', 'clear']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['insert', ['link', 'picture', 'video', 'table']],
-            ['view', ['fullscreen', 'codeview', 'help']]
-        ],
-        styleTags: [
-            'p',
-            { title: 'Heading 1', tag: 'h1' },
-            { title: 'Heading 2', tag: 'h2' },
-            { title: 'Heading 3', tag: 'h3' },
-            { title: 'Heading 4', tag: 'h4' },
-            { title: 'Heading 5', tag: 'h5' },
-            { title: 'Heading 6', tag: 'h6' }
-        ],
-        callbacks: {
-            onInit: function() {
-                $('.note-editor').css('border-radius', '8px');
-                $('.note-editor').css('border', '1px solid #e5e7eb');
-                $('.note-editor').css('box-shadow', '0 1px 3px rgba(0, 0, 0, 0.1)');
+    let descriptionEditor = null;
+    const descriptionField = document.getElementById('description');
+    
+    if (descriptionField && typeof ClassicEditor !== 'undefined') {
+        ClassicEditor.create(descriptionField)
+            .then(editor => {
+                descriptionEditor = editor;
+            })
+            .catch(error => {
+                console.error('CKEditor init failed:', error);
+            });
+            
+        $('form').on('submit', function() {
+            if (descriptionEditor) {
+                descriptionField.value = descriptionEditor.getData();
             }
-        }
-    });
+        });
+    }
 
     // Simple Image Upload Functionality
     const maxFiles = 10;

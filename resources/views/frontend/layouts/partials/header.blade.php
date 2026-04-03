@@ -1,3 +1,10 @@
+@php
+    $generalSettings = \App\Models\SiteSetting::getGroup('general');
+    $siteName = $generalSettings['site_name'] ?? config('app.name', 'Sapphire Investment');
+    $siteLogo = $generalSettings['site_logo'] ?? null;
+    $nameParts = explode(' ', $siteName, 2);
+@endphp
+
 <!-- Header Partial -->
 <header x-data="{ mobileMenuOpen: false, scrolled: false }" 
         @scroll.window="scrolled = (window.pageYOffset > 20)"
@@ -7,19 +14,25 @@
         <div class="flex items-center justify-between">
             <!-- Logo -->
             <a href="/" class="flex items-center gap-3 group">
-                <div class="relative w-12 h-12 flex items-center justify-center">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-primary to-accent rounded-xl transform rotate-3 group-hover:rotate-6 transition-transform duration-300"></div>
-                    <div class="absolute inset-[2px] bg-white rounded-xl transform -rotate-3 group-hover:rotate-0 transition-transform duration-300 flex items-center justify-center">
-                        <span class="text-primary font-black text-2xl tracking-tighter">S</span>
+                @if($siteLogo)
+                    <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ $siteName }}" class="h-10 md:h-12 object-contain">
+                @else
+                    <div class="relative w-12 h-12 flex items-center justify-center">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-primary to-accent rounded-xl transform rotate-3 group-hover:rotate-6 transition-transform duration-300"></div>
+                        <div class="absolute inset-[2px] bg-white rounded-xl transform -rotate-3 group-hover:rotate-0 transition-transform duration-300 flex items-center justify-center">
+                            <span class="text-primary font-black text-2xl tracking-tighter">{{ substr($siteName, 0, 1) }}</span>
+                        </div>
                     </div>
-                </div>
+                @endif
                 <div class="flex flex-col leading-tight">
                     <span class="text-2xl font-black tracking-tight" :class="{ 'text-slate-900': scrolled, 'text-white': !scrolled }">
-                        Sapphire
+                        {{ $nameParts[0] ?? '' }}
                     </span>
+                    @if(isset($nameParts[1]))
                     <span class="text-xs font-bold tracking-[0.2em] uppercase" :class="{ 'text-primary': scrolled, 'text-blue-300': !scrolled }">
-                        Investment
+                        {{ $nameParts[1] }}
                     </span>
+                    @endif
                 </div>
             </a>
 
@@ -28,13 +41,13 @@
                  :class="{ 'bg-slate-100/50 border-white/50': scrolled, 'bg-white/10 backdrop-blur-md border-white/20': !scrolled }">
                 <a href="/" class="px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-sm" 
                    :class="{ 'text-slate-700': scrolled, 'text-white': !scrolled }">Home</a>
-                <a href="#about" class="px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-sm" 
+                <a href="{{ route('frontend.about') }}" class="px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-sm" 
                    :class="{ 'text-slate-700': scrolled, 'text-white/90': !scrolled }">About</a>
-                <a href="#properties" class="px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-sm" 
+                <a href="{{ route('frontend.properties.index') }}" class="px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-sm" 
                    :class="{ 'text-slate-700': scrolled, 'text-white/90': !scrolled }">Properties</a>
-                <a href="#blog" class="px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-sm" 
+                <a href="{{ route('frontend.blogs.index') }}" class="px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-sm" 
                    :class="{ 'text-slate-700': scrolled, 'text-white/90': !scrolled }">Insights</a>
-                <a href="#contact" class="px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-sm" 
+                <a href="{{ route('frontend.contact') }}" class="px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 hover:bg-white hover:text-primary hover:shadow-sm" 
                    :class="{ 'text-slate-700': scrolled, 'text-white/90': !scrolled }">Contact</a>
             </nav>
 
@@ -73,10 +86,10 @@
         
         <nav class="flex flex-col items-center gap-8 text-center px-4 w-full max-w-sm">
             <a href="/" @click="mobileMenuOpen = false" class="text-3xl font-bold text-white hover:text-accent transition-colors">Home</a>
-            <a href="#about" @click="mobileMenuOpen = false" class="text-3xl font-bold text-white hover:text-accent transition-colors">About</a>
-            <a href="#properties" @click="mobileMenuOpen = false" class="text-3xl font-bold text-white hover:text-accent transition-colors">Properties</a>
-            <a href="#blog" @click="mobileMenuOpen = false" class="text-3xl font-bold text-white hover:text-accent transition-colors">Insights</a>
-            <a href="#contact" @click="mobileMenuOpen = false" class="text-3xl font-bold text-white hover:text-accent transition-colors">Contact</a>
+            <a href="{{ route('frontend.about') }}" @click="mobileMenuOpen = false" class="text-3xl font-bold text-white hover:text-accent transition-colors">About</a>
+            <a href="{{ route('frontend.properties.index') }}" @click="mobileMenuOpen = false" class="text-3xl font-bold text-white hover:text-accent transition-colors">Properties</a>
+            <a href="{{ route('frontend.blogs.index') }}" @click="mobileMenuOpen = false" class="text-3xl font-bold text-white hover:text-accent transition-colors">Insights</a>
+            <a href="{{ route('frontend.contact') }}" @click="mobileMenuOpen = false" class="text-3xl font-bold text-white hover:text-accent transition-colors">Contact</a>
             
             <div class="h-px w-24 bg-white/20 my-4"></div>
             

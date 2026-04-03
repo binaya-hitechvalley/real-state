@@ -17,7 +17,7 @@
 @endpush
 
 @section('content')
-<div class="container mx-auto max-w-5xl">
+<div class="container mx-auto max-w-7xl">
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
         <div>
@@ -258,6 +258,23 @@
 @endsection
 
 @push('scripts')
+<style>
+/* Fix CKEditor Tailwind Reset Issues */
+.ck-editor__editable_inline {
+    min-height: 400px;
+}
+.ck-content h1 { font-size: 2em; font-weight: bold; margin-top: 0.67em; margin-bottom: 0.67em; }
+.ck-content h2 { font-size: 1.5em; font-weight: bold; margin-top: 0.83em; margin-bottom: 0.83em; }
+.ck-content h3 { font-size: 1.17em; font-weight: bold; margin-top: 1em; margin-bottom: 1em; }
+.ck-content h4 { font-size: 1em; font-weight: bold; margin-top: 1.33em; margin-bottom: 1.33em; }
+.ck-content h5 { font-size: 0.83em; font-weight: bold; margin-top: 1.67em; margin-bottom: 1.67em; }
+.ck-content h6 { font-size: 0.67em; font-weight: bold; margin-top: 2.33em; margin-bottom: 2.33em; }
+.ck-content ul { list-style-type: decimal; padding-left: 40px; margin-top: 1em; margin-bottom: 1em; }
+.ck-content ul { list-style-type: disc; }
+.ck-content ol { list-style-type: decimal; padding-left: 40px; margin-top: 1em; margin-bottom: 1em; }
+.ck-content p { margin-top: 1em; margin-bottom: 1em; }
+.ck-content a { color: #2563eb; text-decoration: underline; }
+</style>
 <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
 <script>
     // Initialize CKEditor

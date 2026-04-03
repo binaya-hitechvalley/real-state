@@ -5,8 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', config('app.name', 'Sapphire Investment'))</title>
+    @php
+        $generalSettings = \App\Models\SiteSetting::getGroup('general');
+        $siteTitle = $generalSettings['site_title'] ?? config('app.name', 'Sapphire Investment');
+        $siteFavicon = $generalSettings['site_favicon'] ?? null;
+    @endphp
 
+    <title>@yield('title', $siteTitle)</title>
+    @if($siteFavicon)
+        <link rel="icon" href="{{ asset('storage/' . $siteFavicon) }}">
+    @endif
+    @hasSection('meta_tags')
+        @yield('meta_tags')
+    @else
+        <meta name="description" content="{{ $generalSettings['site_description'] ?? '' }}">
+        <meta name="keywords" content="{{ $generalSettings['site_keywords'] ?? '' }}">
+    @endif
+    
     <!-- Tailwind CSS CDN for temporary preview -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>

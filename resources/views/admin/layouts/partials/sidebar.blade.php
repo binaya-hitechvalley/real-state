@@ -94,6 +94,38 @@
             </li>
         </ul>
         
+        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-8 mb-4 sidebar-text">Site Settings</p>
+        <ul class="space-y-2">
+            <li>
+                <a href="{{ route('admin.settings.general') }}" class="flex items-center p-3 rounded-lg {{ Request::routeIs('admin.settings.general*') ? 'active-sidebar-item' : 'hover:bg-gray-100' }}">
+                    <i class="fas fa-cog text-blue-500 w-5"></i>
+                    <span class="ml-3 font-medium sidebar-text">General Settings</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.settings.about') }}" class="flex items-center p-3 rounded-lg {{ Request::routeIs('admin.settings.about*') ? 'active-sidebar-item' : 'hover:bg-gray-100' }}">
+                    <i class="fas fa-info-circle text-blue-500 w-5"></i>
+                    <span class="ml-3 font-medium sidebar-text">About Page</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.settings.contact') }}" class="flex items-center p-3 rounded-lg {{ Request::routeIs('admin.settings.contact*') ? 'active-sidebar-item' : 'hover:bg-gray-100' }}">
+                    <i class="fas fa-address-card text-blue-500 w-5"></i>
+                    <span class="ml-3 font-medium sidebar-text">Contact Page</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.contact-messages.index') }}" class="flex items-center p-3 rounded-lg {{ Request::routeIs('admin.contact-messages.*') ? 'active-sidebar-item' : 'hover:bg-gray-100' }}">
+                    <i class="fas fa-envelope text-blue-500 w-5"></i>
+                    <span class="ml-3 font-medium sidebar-text">Messages</span>
+                    @php $unreadMsgCount = \App\Models\ContactMessage::where('is_read', false)->count(); @endphp
+                    @if($unreadMsgCount > 0)
+                        <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full sidebar-text">{{ $unreadMsgCount }}</span>
+                    @endif
+                </a>
+            </li>
+        </ul>
+        
         {{-- <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-8 mb-4 sidebar-text">Support</p>
         <ul class="space-y-2">
             <li>

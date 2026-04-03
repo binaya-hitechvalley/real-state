@@ -33,6 +33,9 @@ class Property extends Model
         'longitude',
         'status',
         'is_featured',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
     ];
 
     /**
