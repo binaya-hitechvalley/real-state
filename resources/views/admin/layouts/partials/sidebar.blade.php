@@ -72,6 +72,28 @@
             </li>
         </ul>
         
+        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-8 mb-4 sidebar-text">Content Management</p>
+        <ul class="space-y-2">
+            <li>
+                <a href="{{ route('admin.blogs.index') }}" class="flex items-center p-3 rounded-lg {{ Request::routeIs('admin.blogs.*') ? 'active-sidebar-item' : 'hover:bg-gray-100' }}">
+                    <i class="fas fa-newspaper text-blue-500 w-5"></i>
+                    <span class="ml-3 font-medium sidebar-text">Blogs</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.testimonials.index') }}" class="flex items-center p-3 rounded-lg {{ Request::routeIs('admin.testimonials.*') ? 'active-sidebar-item' : 'hover:bg-gray-100' }}">
+                    <i class="fas fa-quote-right text-blue-500 w-5"></i>
+                    <span class="ml-3 font-medium sidebar-text">Testimonials</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.faqs.index') }}" class="flex items-center p-3 rounded-lg {{ Request::routeIs('admin.faqs.*') ? 'active-sidebar-item' : 'hover:bg-gray-100' }}">
+                    <i class="fas fa-question-circle text-blue-500 w-5"></i>
+                    <span class="ml-3 font-medium sidebar-text">FAQs</span>
+                </a>
+            </li>
+        </ul>
+        
         {{-- <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-8 mb-4 sidebar-text">Support</p>
         <ul class="space-y-2">
             <li>

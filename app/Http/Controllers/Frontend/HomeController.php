@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Slider;
 use App\Models\Property;
 use App\Models\BusinessType;
+use App\Models\Blog;
+use App\Models\Testimonial;
+use App\Models\Faq;
+use App\Models\SiteStat;
 
 class HomeController extends Controller
 {
@@ -38,7 +42,39 @@ class HomeController extends Controller
         
         // Get business types for filtering
         $businessTypes = BusinessType::orderBy('name')->get();
+
+        // Get active blogs for the Market Insights section
+        $blogs = Blog::with('image')
+            ->active()
+            ->published()
+            ->ordered()
+            ->take(8)
+            ->get();
+
+        // Get active testimonials
+        $testimonials = Testimonial::active()
+            ->ordered()
+            ->get();
+
+        // Get active FAQs
+        $faqs = Faq::active()
+            ->ordered()
+            ->get();
+
+        // Get active site stats
+        $siteStats = SiteStat::active()
+            ->ordered()
+            ->get();
             
-        return view('frontend.home', compact('sliders', 'featuredProperties', 'allProperties', 'businessTypes'));
+        return view('frontend.home', compact(
+            'sliders',
+            'featuredProperties',
+            'allProperties',
+            'businessTypes',
+            'blogs',
+            'testimonials',
+            'faqs',
+            'siteStats'
+        ));
     }
 }

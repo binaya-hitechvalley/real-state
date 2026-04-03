@@ -417,140 +417,54 @@
                 <div class="swiper blog-swiper pb-8 pr-[1rem]">
                     <div class="swiper-wrapper">
                         
-                        <!-- Blog Slide 1 -->
+                        @forelse($blogs as $blog)
+                        <!-- Dynamic Blog Slide -->
                         <div class="swiper-slide" style="width: 320px;">
                             <article class="group bg-slate-50 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-300 border border-slate-100 flex flex-col h-full">
                                 <div class="relative h-48 overflow-hidden m-2 rounded-[1.5rem]">
-                                    <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blog" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                                    @if($blog->display_image)
+                                        <img src="{{ $blog->display_image }}" alt="{{ $blog->title }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                                    @else
+                                        <div class="w-full h-full bg-slate-200 flex items-center justify-center">
+                                            <i class="fas fa-newspaper text-4xl text-slate-400"></i>
+                                        </div>
+                                    @endif
                                     <div class="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl text-center shadow-sm">
-                                        <span class="block text-primary font-black text-base leading-none">15</span>
-                                        <span class="block text-slate-500 text-[9px] font-bold uppercase tracking-wider mt-0.5">Oct</span>
+                                        <span class="block text-primary font-black text-base leading-none">{{ $blog->published_day }}</span>
+                                        <span class="block text-slate-500 text-[9px] font-bold uppercase tracking-wider mt-0.5">{{ $blog->published_month }}</span>
                                     </div>
                                 </div>
                                 <div class="p-5 flex flex-col flex-grow">
+                                    @if($blog->category)
                                     <div class="flex items-center gap-3 text-[10px] font-bold text-slate-400 mb-3 uppercase tracking-wider">
-                                        <span class="flex items-center gap-1"><i class="fas fa-folder text-accent"></i> Invest</span>
+                                        <span class="flex items-center gap-1"><i class="fas fa-folder text-accent"></i> {{ $blog->category }}</span>
                                     </div>
+                                    @endif
                                     <h3 class="text-base font-bold text-slate-900 mb-3 group-hover:text-primary transition-colors leading-snug truncate">
-                                        <a href="#">Why Ktm Valley is Secure</a>
+                                        <a href="{{ route('frontend.blogs.show', $blog->slug) }}">{{ $blog->title }}</a>
                                     </h3>
                                     <p class="text-slate-500 text-xs mb-4 line-clamp-2 font-medium flex-grow">
-                                        Exploring the factors driving property values in the capital and long-term hold strategies.
+                                        {{ $blog->excerpt }}
                                     </p>
-                                    <a href="#" class="inline-flex items-center gap-1.5 text-primary font-bold text-xs tracking-wide uppercase group/link mt-auto">
+                                    <a href="{{ route('frontend.blogs.show', $blog->slug) }}" class="inline-flex items-center gap-1.5 text-primary font-bold text-xs tracking-wide uppercase group/link mt-auto">
                                         Read <i class="fas fa-arrow-right transform group-hover/link:translate-x-1 transition-transform"></i>
                                     </a>
                                 </div>
                             </article>
                         </div>
-
-                        <!-- Blog Slide 2 -->
+                        @empty
+                        <!-- Fallback when no blogs -->
                         <div class="swiper-slide" style="width: 320px;">
-                            <article class="group bg-slate-50 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-300 border border-slate-100 flex flex-col h-full">
-                                <div class="relative h-48 overflow-hidden m-2 rounded-[1.5rem]">
-                                    <img src="https://images.unsplash.com/photo-1554469384-e58fac16e23a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blog" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                                    <div class="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl text-center shadow-sm">
-                                        <span class="block text-primary font-black text-base leading-none">02</span>
-                                        <span class="block text-slate-500 text-[9px] font-bold uppercase tracking-wider mt-0.5">Oct</span>
+                            <article class="bg-slate-50 rounded-[2rem] overflow-hidden shadow-sm border border-slate-100 flex flex-col h-full">
+                                <div class="relative h-48 overflow-hidden m-2 rounded-[1.5rem] bg-slate-100 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <i class="fas fa-newspaper text-4xl text-slate-300 mb-3"></i>
+                                        <p class="text-slate-500 text-sm">No blog posts available yet</p>
                                     </div>
-                                </div>
-                                <div class="p-5 flex flex-col flex-grow">
-                                    <div class="flex items-center gap-3 text-[10px] font-bold text-slate-400 mb-3 uppercase tracking-wider">
-                                        <span class="flex items-center gap-1"><i class="fas fa-folder text-accent"></i> Legal</span>
-                                    </div>
-                                    <h3 class="text-base font-bold text-slate-900 mb-3 group-hover:text-primary transition-colors leading-snug truncate">
-                                        <a href="#">Aana Vs. Square Feet Guide</a>
-                                    </h3>
-                                    <p class="text-slate-500 text-xs mb-4 line-clamp-2 font-medium flex-grow">
-                                        A comprehensive guide for non-resident Nepalis explaining local measurement units.
-                                    </p>
-                                    <a href="#" class="inline-flex items-center gap-1.5 text-primary font-bold text-xs tracking-wide uppercase group/link mt-auto">
-                                        Read <i class="fas fa-arrow-right transform group-hover/link:translate-x-1 transition-transform"></i>
-                                    </a>
                                 </div>
                             </article>
                         </div>
-
-                        <!-- Blog Slide 3 -->
-                        <div class="swiper-slide" style="width: 320px;">
-                            <article class="group bg-slate-50 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-300 border border-slate-100 flex flex-col h-full">
-                                <div class="relative h-48 overflow-hidden m-2 rounded-[1.5rem]">
-                                    <img src="https://images.unsplash.com/photo-1516156008625-3a9d045f6211?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blog" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                                    <div class="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl text-center shadow-sm">
-                                        <span class="block text-primary font-black text-base leading-none">28</span>
-                                        <span class="block text-slate-500 text-[9px] font-bold uppercase tracking-wider mt-0.5">Sep</span>
-                                    </div>
-                                </div>
-                                <div class="p-5 flex flex-col flex-grow">
-                                    <div class="flex items-center gap-3 text-[10px] font-bold text-slate-400 mb-3 uppercase tracking-wider">
-                                        <span class="flex items-center gap-1"><i class="fas fa-folder text-accent"></i> Tips</span>
-                                    </div>
-                                    <h3 class="text-base font-bold text-slate-900 mb-3 group-hover:text-primary transition-colors leading-snug truncate">
-                                        <a href="#">5 Suburb Plotted Land Checks</a>
-                                    </h3>
-                                    <p class="text-slate-500 text-xs mb-4 line-clamp-2 font-medium flex-grow">
-                                        Learn how to verify road access, drainage, and utilities before signing the deed.
-                                    </p>
-                                    <a href="#" class="inline-flex items-center gap-1.5 text-primary font-bold text-xs tracking-wide uppercase group/link mt-auto">
-                                        Read <i class="fas fa-arrow-right transform group-hover/link:translate-x-1 transition-transform"></i>
-                                    </a>
-                                </div>
-                            </article>
-                        </div>
-
-                        <!-- Blog Slide 4 -->
-                        <div class="swiper-slide" style="width: 320px;">
-                            <article class="group bg-slate-50 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-300 border border-slate-100 flex flex-col h-full">
-                                <div class="relative h-48 overflow-hidden m-2 rounded-[1.5rem]">
-                                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blog" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                                    <div class="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl text-center shadow-sm">
-                                        <span class="block text-primary font-black text-base leading-none">12</span>
-                                        <span class="block text-slate-500 text-[9px] font-bold uppercase tracking-wider mt-0.5">Aug</span>
-                                    </div>
-                                </div>
-                                <div class="p-5 flex flex-col flex-grow">
-                                    <div class="flex items-center gap-3 text-[10px] font-bold text-slate-400 mb-3 uppercase tracking-wider">
-                                        <span class="flex items-center gap-1"><i class="fas fa-folder text-accent"></i> Commercial</span>
-                                    </div>
-                                    <h3 class="text-base font-bold text-slate-900 mb-3 group-hover:text-primary transition-colors leading-snug truncate">
-                                        <a href="#">Rise of Co-Working Spaces</a>
-                                    </h3>
-                                    <p class="text-slate-500 text-xs mb-4 line-clamp-2 font-medium flex-grow">
-                                        How the post-pandemic landscape is shaping commercial real estate demands in Nepal.
-                                    </p>
-                                    <a href="#" class="inline-flex items-center gap-1.5 text-primary font-bold text-xs tracking-wide uppercase group/link mt-auto">
-                                        Read <i class="fas fa-arrow-right transform group-hover/link:translate-x-1 transition-transform"></i>
-                                    </a>
-                                </div>
-                            </article>
-                        </div>
-
-                        <!-- Blog Slide 5 -->
-                        <div class="swiper-slide" style="width: 320px;">
-                            <article class="group bg-slate-50 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-300 border border-slate-100 flex flex-col h-full">
-                                <div class="relative h-48 overflow-hidden m-2 rounded-[1.5rem]">
-                                    <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blog" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                                    <div class="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl text-center shadow-sm">
-                                        <span class="block text-primary font-black text-base leading-none">05</span>
-                                        <span class="block text-slate-500 text-[9px] font-bold uppercase tracking-wider mt-0.5">Jun</span>
-                                    </div>
-                                </div>
-                                <div class="p-5 flex flex-col flex-grow">
-                                    <div class="flex items-center gap-3 text-[10px] font-bold text-slate-400 mb-3 uppercase tracking-wider">
-                                        <span class="flex items-center gap-1"><i class="fas fa-folder text-accent"></i> Design</span>
-                                    </div>
-                                    <h3 class="text-base font-bold text-slate-900 mb-3 group-hover:text-primary transition-colors leading-snug truncate">
-                                        <a href="#">Modernizing Neo-Classic Homes</a>
-                                    </h3>
-                                    <p class="text-slate-500 text-xs mb-4 line-clamp-2 font-medium flex-grow">
-                                        Tips on renovating older Kathmandu homes while preserving their classic architectural charm.
-                                    </p>
-                                    <a href="#" class="inline-flex items-center gap-1.5 text-primary font-bold text-xs tracking-wide uppercase group/link mt-auto">
-                                        Read <i class="fas fa-arrow-right transform group-hover/link:translate-x-1 transition-transform"></i>
-                                    </a>
-                                </div>
-                            </article>
-                        </div>
+                        @endforelse
 
                     </div>
                 </div>
@@ -563,36 +477,25 @@
 <!-- ==========================================
      STATS BANNER
      ========================================== -->
+@if($siteStats->isNotEmpty())
 <section class="py-12 bg-white">
     <div class="container mx-auto px-4 md:px-8">
         <div class="bg-gray-50 rounded-2xl py-10 px-8 flex flex-col md:flex-row justify-center items-center gap-12 md:gap-24 text-center border border-gray-100">
-            <!-- Stat 1 -->
+            @foreach($siteStats as $stat)
             <div>
-                <div class="text-4xl md:text-5xl font-bold text-emerald-500 mb-2">5,635</div>
-                <div class="text-xs font-semibold text-gray-500 tracking-wider uppercase">Houses For Sale</div>
+                <div class="text-4xl md:text-5xl font-bold text-emerald-500 mb-2">{{ $stat->value }}</div>
+                <div class="text-xs font-semibold text-gray-500 tracking-wider uppercase">{{ $stat->label }}</div>
             </div>
-            <!-- Stat 2 -->
-            <div>
-                <div class="text-4xl md:text-5xl font-bold text-emerald-500 mb-2">324</div>
-                <div class="text-xs font-semibold text-gray-500 tracking-wider uppercase">Open Houses</div>
-            </div>
-            <!-- Stat 3 -->
-            <div>
-                <div class="text-4xl md:text-5xl font-bold text-emerald-500 mb-2">105</div>
-                <div class="text-xs font-semibold text-gray-500 tracking-wider uppercase">Houses Recently Sold</div>
-            </div>
-            <!-- Stat 4 -->
-            <div>
-                <div class="text-4xl md:text-5xl font-bold text-emerald-500 mb-2">301</div>
-                <div class="text-xs font-semibold text-gray-500 tracking-wider uppercase">Price Reduced</div>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
+@endif
 
 <!-- ==========================================
      TESTIMONIALS
      ========================================== -->
+@if($testimonials->isNotEmpty())
 <section class="py-24 relative overflow-hidden bg-slate-900 border-t border-white/5">
     <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-slate-900 to-slate-900 pointer-events-none"></div>
 
@@ -623,81 +526,56 @@
             <div class="w-full lg:w-7/12">
                 <div class="swiper testimonial-swiper pb-12 overflow-hidden">
                     <div class="swiper-wrapper">
-                        <!-- T1 -->
+                        @foreach($testimonials as $testimonial)
                         <div class="swiper-slide h-auto">
                             <div class="p-8 md:p-10 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl h-full flex flex-col relative group hover:bg-white/10 transition-colors duration-300">
                                 <i class="fas fa-quote-right text-6xl text-white/5 absolute top-6 right-6 pointer-events-none transform -scale-x-100 group-hover:text-accent/10 transition-colors"></i>
                                 <div class="flex gap-1 text-yellow-400 text-sm mb-6">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                    @for($i = 0; $i < $testimonial->full_stars; $i++)
+                                        <i class="fas fa-star"></i>
+                                    @endfor
+                                    @if($testimonial->has_half_star)
+                                        <i class="fas fa-star-half-alt"></i>
+                                    @endif
+                                    @for($i = 0; $i < $testimonial->empty_stars; $i++)
+                                        <i class="far fa-star"></i>
+                                    @endfor
                                 </div>
                                 <p class="text-lg md:text-xl text-slate-300 font-medium leading-relaxed mb-8 flex-grow">
-                                    "The level of professionalism at Sapphire is unmatched. They found us commercial land in Kathmandu perfectly suited for our warehouse expansion. The transparency in dealing was <span class="text-white font-bold">refreshing</span>."
+                                    "{{ $testimonial->content }}"
                                 </p>
                                 <div class="flex items-center gap-4 pt-6 border-t border-white/10">
                                     <div class="relative w-14 h-14 rounded-full p-1 bg-gradient-to-br from-primary to-accent">
-                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Client" class="w-full h-full rounded-full object-cover">
+                                        @if($testimonial->client_photo_url)
+                                            <img src="{{ $testimonial->client_photo_url }}" alt="{{ $testimonial->client_name }}" class="w-full h-full rounded-full object-cover">
+                                        @else
+                                            <div class="w-full h-full rounded-full bg-white/20 flex items-center justify-center text-white text-xl font-bold">
+                                                {{ strtoupper(substr($testimonial->client_name, 0, 1)) }}
+                                            </div>
+                                        @endif
                                     </div>
                                     <div class="text-left">
-                                        <h4 class="font-bold text-white tracking-wide">Rajesh Shrestha</h4>
-                                        <span class="text-sm font-medium text-accent">Corporate Director</span>
+                                        <h4 class="font-bold text-white tracking-wide">{{ $testimonial->client_name }}</h4>
+                                        @if($testimonial->client_designation)
+                                            <span class="text-sm font-medium text-accent">{{ $testimonial->client_designation }}</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- T2 -->
-                        <div class="swiper-slide h-auto">
-                            <div class="p-8 md:p-10 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl h-full flex flex-col relative group hover:bg-white/10 transition-colors duration-300">
-                                <i class="fas fa-quote-right text-6xl text-white/5 absolute top-6 right-6 pointer-events-none transform -scale-x-100 group-hover:text-accent/10 transition-colors"></i>
-                                <div class="flex gap-1 text-yellow-400 text-sm mb-6">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                                </div>
-                                <p class="text-lg md:text-xl text-slate-300 font-medium leading-relaxed mb-8 flex-grow">
-                                    "As an NRN, I was worried about investing in property back home. Sapphire Investment made the process transparent and easy, with regular updates and all documents <span class="text-white font-bold">verified properly</span>."
-                                </p>
-                                <div class="flex items-center gap-4 pt-6 border-t border-white/10">
-                                    <div class="relative w-14 h-14 rounded-full p-1 bg-gradient-to-br from-primary to-accent">
-                                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Client" class="w-full h-full rounded-full object-cover">
-                                    </div>
-                                    <div class="text-left">
-                                        <h4 class="font-bold text-white tracking-wide">Sita Sharma</h4>
-                                        <span class="text-sm font-medium text-accent">NRN Investor</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- T3 -->
-                        <div class="swiper-slide h-auto">
-                            <div class="p-8 md:p-10 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl h-full flex flex-col relative group hover:bg-white/10 transition-colors duration-300">
-                                <i class="fas fa-quote-right text-6xl text-white/5 absolute top-6 right-6 pointer-events-none transform -scale-x-100 group-hover:text-accent/10 transition-colors"></i>
-                                <div class="flex gap-1 text-yellow-400 text-sm mb-6">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
-                                </div>
-                                <p class="text-lg md:text-xl text-slate-300 font-medium leading-relaxed mb-8 flex-grow">
-                                    "The team understood exactly what I was looking for and showed me multiple options within my budget. I found my <span class="text-white font-bold">dream home</span> within 2 weeks of working with them!"
-                                </p>
-                                <div class="flex items-center gap-4 pt-6 border-t border-white/10">
-                                    <div class="relative w-14 h-14 rounded-full p-1 bg-gradient-to-br from-primary to-accent">
-                                        <img src="https://randomuser.me/api/portraits/men/86.jpg" alt="Client" class="w-full h-full rounded-full object-cover">
-                                    </div>
-                                    <div class="text-left">
-                                        <h4 class="font-bold text-white tracking-wide">Prakash K.C.</h4>
-                                        <span class="text-sm font-medium text-accent">Home Owner</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+@endif
 
 <!-- ==========================================
      FAQ SECTION
      ========================================== -->
+@if($faqs->isNotEmpty())
 <section class="py-24 bg-white relative overflow-hidden">
     <div class="container mx-auto px-4 md:px-8 max-w-4xl">
         <div class="text-center mb-16">
@@ -711,60 +589,23 @@
         </div>
 
         <div class="space-y-4">
-            <!-- FAQ 1 -->
+            @foreach($faqs as $faq)
             <div class="faq-item border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300">
                 <button class="faq-toggle w-full flex items-center justify-between p-6 bg-white hover:bg-slate-50 transition-colors text-left focus:outline-none">
-                    <h3 class="font-bold text-slate-900 text-lg">How do I verify the legal documents of a property?</h3>
+                    <h3 class="font-bold text-slate-900 text-lg">{{ $faq->question }}</h3>
                     <div class="w-8 h-8 rounded-full bg-blue-50 text-primary flex items-center justify-center flex-shrink-0 transition-transform duration-300 icon-wrapper">
                         <i class="fas fa-plus"></i>
                     </div>
                 </button>
                 <div class="faq-content hidden px-6 pb-6 text-slate-600 font-medium leading-relaxed border-t border-slate-100 pt-4">
-                    Our team conducts a thorough 5-point verification check for every property we list. This includes checking the Lalpurja (Land Ownership Certificate), Blueprint, trace map, tax clearance, and citizenship of the owner. We also facilitate meetings with legal experts to give you complete peace of mind.
+                    {{ $faq->answer }}
                 </div>
             </div>
-
-            <!-- FAQ 2 -->
-            <div class="faq-item border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300">
-                <button class="faq-toggle w-full flex items-center justify-between p-6 bg-white hover:bg-slate-50 transition-colors text-left focus:outline-none">
-                    <h3 class="font-bold text-slate-900 text-lg">What are your commission rates?</h3>
-                    <div class="w-8 h-8 rounded-full bg-blue-50 text-primary flex items-center justify-center flex-shrink-0 transition-transform duration-300 icon-wrapper">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                </button>
-                <div class="faq-content hidden px-6 pb-6 text-slate-600 font-medium leading-relaxed border-t border-slate-100 pt-4">
-                    For our owned projects, there is absolutely zero commission or middleman fee. You buy direct from the developer. For brokered listings, our standard agency fee is transparently communicated upfront before any transaction begins, strictly abiding by Nepal's real estate associations' guidelines.
-                </div>
-            </div>
-
-            <!-- FAQ 3 -->
-            <div class="faq-item border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300">
-                <button class="faq-toggle w-full flex items-center justify-between p-6 bg-white hover:bg-slate-50 transition-colors text-left focus:outline-none">
-                    <h3 class="font-bold text-slate-900 text-lg">Can Non-Resident Nepalese (NRNs) buy property here?</h3>
-                    <div class="w-8 h-8 rounded-full bg-blue-50 text-primary flex items-center justify-center flex-shrink-0 transition-transform duration-300 icon-wrapper">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                </button>
-                <div class="faq-content hidden px-6 pb-6 text-slate-600 font-medium leading-relaxed border-t border-slate-100 pt-4">
-                    Yes, NRNs can easily invest in real estate in Nepal. The new NRN act allows NRN cardholders to purchase limited residential land or apartments. Our legal team will guide you step-by-step through the updated banking, repatriation, and registration processes specialized for expatriates.
-                </div>
-            </div>
-
-            <!-- FAQ 4 -->
-            <div class="faq-item border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300">
-                <button class="faq-toggle w-full flex items-center justify-between p-6 bg-white hover:bg-slate-50 transition-colors text-left focus:outline-none">
-                    <h3 class="font-bold text-slate-900 text-lg">Do you help with home loans and financing?</h3>
-                    <div class="w-8 h-8 rounded-full bg-blue-50 text-primary flex items-center justify-center flex-shrink-0 transition-transform duration-300 icon-wrapper">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                </button>
-                <div class="faq-content hidden px-6 pb-6 text-slate-600 font-medium leading-relaxed border-t border-slate-100 pt-4">
-                    Absolutely! We have partnered with Nepal's leading Class-A commercial banks. Once you finalize a property, we assist in fast-tracking your home loan appraisal and approval process, often securing preferred interest rates for our clients due to our strong banking relationships.
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
+@endif
 
 <!-- ==========================================
      CALL TO ACTION (CTA)

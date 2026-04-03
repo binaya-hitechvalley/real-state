@@ -7,6 +7,9 @@ use App\Http\Controllers\Admin\PropertyTypeController;
 use App\Http\Controllers\Admin\BusinessTypeController;
 use App\Http\Controllers\Admin\PropertyController;
 use App\Http\Controllers\Admin\PropertyFeatureController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\TestimonialController;
+use App\Http\Controllers\Admin\FaqController;
 
 // Admin routes will be defined here
 // Example:
@@ -41,4 +44,13 @@ Route::prefix('admin')->group(function () {
     Route::post('property-features/bulk-delete', [PropertyFeatureController::class, 'bulkDelete'])->name('admin.property-features.bulk-delete');
     Route::post('property-features/bulk-update', [PropertyFeatureController::class, 'bulkUpdate'])->name('admin.property-features.bulk-update');
     Route::get('property-features/{id}/details', [PropertyFeatureController::class, 'getFeatureDetails'])->name('admin.property-features.details');
+    
+    // Blog Management
+    Route::resource('blogs', BlogController::class)->names('admin.blogs');
+    
+    // Testimonials Management
+    Route::resource('testimonials', TestimonialController::class)->names('admin.testimonials');
+    
+    // FAQs Management
+    Route::resource('faqs', FaqController::class)->names('admin.faqs');
 });

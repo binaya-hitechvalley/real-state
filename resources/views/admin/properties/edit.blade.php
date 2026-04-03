@@ -558,15 +558,17 @@ $(document).ready(function() {
     });
 
     // Load districts when state changes
-    $('#state_id').on('change', function() {
+    $('#state_id').on('change', function(e, initLoad = false) {
         const stateId = $(this).val();
         const districtSelect = $('#district_id');
         const municipalitySelect = $('#municipality_id');
-        const currentDistrictId = {{ $property->district_id ?? 'null' }};
+        const currentDistrictId = {{ old('district_id', $property->district_id ?? 'null') }};
 
-        // Reset district and municipality dropdowns
-        districtSelect.html('<option value="">Select District</option>');
-        municipalitySelect.html('<option value="">Select Municipality</option>');
+        if(!initLoad) {
+            // Reset district and municipality dropdowns
+            districtSelect.html('<option value="">Select District</option>');
+            municipalitySelect.html('<option value="">Select Municipality</option>');
+        }
 
         if (stateId) {
             $.ajax({
@@ -575,11 +577,16 @@ $(document).ready(function() {
                 success: function(data) {
                     districtSelect.html('<option value="">Select District</option>');
                     data.forEach(function(district) {
-                        const selected = district.id === currentDistrictId ? 'selected' : '';
+                        const selected = (district.id == currentDistrictId) ? 'selected' : '';
                         districtSelect.append(
                             '<option value="' + district.id + '" ' + selected + '>' + district.name + '</option>'
                         );
                     });
+                    
+                    // Automatically load municipalities if we have a district selected
+                    if (currentDistrictId && initLoad) {
+                        districtSelect.trigger('change', [true]);
+                    }
                 },
                 error: function() {
                     districtSelect.html('<option value="">Error loading districts</option>');
@@ -589,12 +596,14 @@ $(document).ready(function() {
     });
 
     // Load municipalities when district changes
-    $('#district_id').on('change', function() {
+    $('#district_id').on('change', function(e, initLoad = false) {
         const districtId = $(this).val();
         const municipalitySelect = $('#municipality_id');
-        const currentMunicipalityId = {{ $property->municipality_id ?? 'null' }};
+        const currentMunicipalityId = {{ old('municipality_id', $property->municipality_id ?? 'null') }};
 
-        municipalitySelect.html('<option value="">Loading...</option>');
+        if(!initLoad) {
+            municipalitySelect.html('<option value="">Loading...</option>');
+        }
 
         if (districtId) {
             $.ajax({
@@ -603,7 +612,7 @@ $(document).ready(function() {
                 success: function(data) {
                     municipalitySelect.html('<option value="">Select Municipality</option>');
                     data.forEach(function(municipality) {
-                        const selected = municipality.id === currentMunicipalityId ? 'selected' : '';
+                        const selected = (municipality.id == currentMunicipalityId) ? 'selected' : '';
                         municipalitySelect.append(
                             '<option value="' + municipality.id + '" ' + selected + '>' + municipality.name + '</option>'
                         );
@@ -619,9 +628,9 @@ $(document).ready(function() {
     });
 
     // Initialize with current state's districts if state is selected
-    const currentStateId = {{ $property->state_id ?? 'null' }};
+    const currentStateId = {{ old('state_id', $property->state_id ?? 'null') }};
     if (currentStateId) {
-        $('#state_id').trigger('change');
+        $('#state_id').val(currentStateId).trigger('change', [true]);
     }
 
     // Land area conversion functionality
